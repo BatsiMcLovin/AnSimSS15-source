@@ -10,7 +10,7 @@ include_directories(
     ${GLM_INCLUDE_PATH}
 	${ASSIMP_INCLUDE_PATH}
 	#${CVK_INCLUDE_PATH}
-	${CUDA_INCLUDE_PATH}
+	#${CUDA_INCLUDE_PATH}
     ${EXTERNAL_LIBRARY_PATHS}
     ${CMAKE_SOURCE_DIR}/src/libraries/
 )
@@ -32,5 +32,5 @@ target_link_libraries(
     ${GLEW_LIBRARIES}
     ${OpenGL3_LIBRARIES}
     ${ASSIMP_LIBRARIES}
-    ${CUDA_LIBRARIES}
+    #${CUDA_LIBRARIES}
 )
