@@ -14,13 +14,15 @@
 #include <vector>
 #include "RigidBody.h"
 #include <GL\glew.h>
+#include <iostream>
 
 
 /** \brief physics World
  *
  * class for the physics simulation world representation
  */
-class World {
+class World : public Singleton<World> {
+	friend class Singleton<World>;
 
 private:
 
@@ -32,6 +34,8 @@ private:
 
 	int allBodyNum;						/**< number of bodies in the world */
 
+	float duration;								/**< step duration */
+	float terminalVeloc;						/**< terminal velocity */
 
 public:
 
@@ -46,7 +50,7 @@ public:
 	 * @param dcIN damping coefficient
 	 * @param bNum number of bodies
 	 */
-	World(float wsIN, float prIN, float scIN, float dcIN, int bNum);
+	World(float wsIN, float prIN, float scIN, float dcIN, int bNum,float durIN, float tvIN);
 
 	/** \brief default constructor
 	*
@@ -120,6 +124,22 @@ public:
 			this->allBodies = allBodies;
 		}
 
+
+		float getTerminalVeloc() const {
+			return terminalVeloc;
+		}
+
+		void setTerminalVeloc(float terminalVeloc) {
+			this->terminalVeloc = terminalVeloc;
+		}
+
+		float getDuration() const {
+			return duration;
+		}
+
+		void setDuration(float duration) {
+			this->duration = duration;
+		}
 };
 
 #endif /* WORLD_H_ */
