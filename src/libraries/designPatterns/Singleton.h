@@ -1,9 +1,4 @@
-/*
- * Singleton.h
- *
- *  Created on: 03.09.2015
- *      Author: Daniel
- */
+
 
 #ifndef SINGLETON_H_
 #define SINGLETON_H_
