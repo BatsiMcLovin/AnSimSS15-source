@@ -1,4 +1,5 @@
 #include "CVK_ShaderPhong.h"
+#include "stdio.h"
 
 
 CVK::ShaderPhong::ShaderPhong(GLuint shader_mask, const char** shaderPaths) : CVK::ShaderMinimal(shader_mask,shaderPaths)

@@ -2,6 +2,7 @@
 #define __CVK_FBO_H
 
 #include "CVK_Defs.h"
+#include <iostream>
 
 namespace CVK
 {

@@ -15,13 +15,14 @@
 #include "RigidBody.h"
 #include <GL\glew.h>
 #include <iostream>
+#include "../designPatterns/Singleton.h"
 
 
 /** \brief physics World
  *
  * class for the physics simulation world representation
  */
-class World : public Singleton<World> {
+class World: public Singleton <World> {
 	friend class Singleton<World>;
 
 private:

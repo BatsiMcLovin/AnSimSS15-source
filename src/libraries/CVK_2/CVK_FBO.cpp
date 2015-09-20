@@ -1,4 +1,5 @@
 #include "CVK_FBO.h"
+#include "stdio.h"
 
 CVK::FBO::FBO(int width, int height)
 {

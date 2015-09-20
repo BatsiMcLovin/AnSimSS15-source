@@ -1,5 +1,6 @@
 #include "CVK_Node.h"
 #include "CVK_ShaderMinimal.h"
+#include "stdio.h"
 
 CVK::Node::Node()
 {

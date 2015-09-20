@@ -8,6 +8,8 @@
 #ifndef ROCKET_H_
 #define ROCKET_H_
 
+#include "RigidBody.h"
+
 class Rocket: public RigidBody {
 
 public:
