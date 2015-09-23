@@ -54,16 +54,16 @@ void init_scene()
 {
 	scene_node = new CVK::Node( "Scene");
 
-	CVK::Teapot *teapot = new CVK::Teapot(); 
+	CVK::Teapot *teapot = new CVK::Teapot();
 
 	CVK::Node *teapot_node_up = new CVK::Node("Teapot_up");
 	teapot_node_up->setModelMatrix( glm::translate(glm::mat4( 1.0f), glm::vec3( 0, 0.72, 0)));
 	teapot_node_up->setMaterial( mat_cvlogo);
 	teapot_node_up->setGeometry( teapot);
 	scene_node->addChild( teapot_node_up);
-	
+
 	CVK::Plane *plane = new CVK::Plane();
-	
+
 	CVK::Node *plane_node_up = new CVK::Node("plane_up");
 	plane_node_up->setModelMatrix( glm::scale( glm::mat4( 1.0f), glm::vec3( 5, 5, 5)));
 	plane_node_up->setMaterial( mat_red);
@@ -82,7 +82,7 @@ void init_scene()
 
 }
 
-int main() 
+int main()
 {
 	// Init GLFW and GLEW
 	glfwInit();
@@ -97,8 +97,8 @@ int main()
 	glm::vec3 BgCol = CVK::State::getInstance()->getBackgroundColor();
 	glClearColor( BgCol.r, BgCol.g, BgCol.b, 0.0);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);         
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//load, compile and link Shader
 	const char *shadernames[2] = { SHADERS_PATH "/Phong.vert", SHADERS_PATH "/Phong.frag" };
@@ -120,11 +120,11 @@ int main()
 	glLineWidth(6);
 
 	CVK::CoordinateSystem coords = CVK::CoordinateSystem(glm::vec3(0.0f));
-	
+
 	while( !glfwWindowShouldClose( window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		//Update Camera
 		cam_trackball.update( window);
 
