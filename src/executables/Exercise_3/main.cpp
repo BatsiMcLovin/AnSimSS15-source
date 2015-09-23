@@ -103,7 +103,6 @@ int main()
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/spaceship.obj");
 	CVK::Node fish("Fish", RESOURCES_PATH "/fish.obj");
 	CVK::Node pig("Pig", RESOURCES_PATH "/piggy.obj");
-	std::cout<<"resources loaded"<<std::endl;
 	//First mass point for the spaceship
 	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0); 
 	//Next ones for the pigs
@@ -129,7 +128,6 @@ int main()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
-		std::cout<<"entered main loop"<<std::endl;
 		//Update Camera
 		camera.update(window);
 

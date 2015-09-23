@@ -21,4 +21,7 @@ void CVK::MassPoint::numericIntegration(float d_t)
 {	
 	// TODO Aufgabe 4 (a)
 	// Implementieren Sie das Euler Integrationsverfahren.
+	mPosition=mPosition+mVelocity*d_t;
+	mVelocity=mVelocity+(mCurrentForce/mMass)*d_t;
+	zeroForce();
 }
