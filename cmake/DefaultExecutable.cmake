@@ -24,6 +24,7 @@ add_definitions(-DGLFW_INCLUDE_GLCOREARB)
 add_definitions(-DBUILD_SHARED_LIBS=off)
 
 add_executable(${ProjectId} ${SOURCES} ${HEADER})
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 target_link_libraries(
     ${ProjectId}
