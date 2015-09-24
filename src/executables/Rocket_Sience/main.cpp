@@ -6,6 +6,8 @@
 #include "Skybox.h"
 #include "ShaderSkybox.h"
 
+#include <sstream>
+
 
 const int width = 640;
 const int height = 480;
@@ -21,11 +23,7 @@ CVK::Trackball camera( width, height, &projection);
 CVK::MassPoint spaceShipMassPoint;
 float spaceShipEngineForce 	= 10.0f;
 float spaceShipRotAngle		= 0.0f;  // angle in degree
-// pigs
-std::vector<CVK::MassPoint> pigsMassPoints;
 
-// fish
-std::vector<glm::quat> quaternions;
 //*************************************************************************************************************
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -50,6 +48,45 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
     }
         
 }
+
+double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
+	static double tZero = glfwGetTime();
+	static double fps = 0.0;
+
+	static double frames = -1.0;
+
+	frames ++;
+
+	if (interval < 0.0)
+		interval = 0.0;
+	else
+		if (interval > 10.0)
+			interval = 10;
+
+	double timeElapsed = glfwGetTime() - tZero;
+
+	if (timeElapsed > interval){
+		fps = frames / timeElapsed;
+		if (title != "NONE"){
+			std::ostringstream stream;
+			stream << fps;
+			std::string fpsToString = stream.str();
+
+			title += " || Frames per second: " + fpsToString;
+
+			const char* pszConstString = title.c_str();
+			glfwSetWindowTitle(window, pszConstString);
+		}
+		else {
+			// std::cout << "Frames per second: " + glm::to_string(fps) << endl;
+		}
+		frames = 0.0;
+		tZero = glfwGetTime();
+	}
+
+	return fps;
+}
+
 
 void resizeCallback( GLFWwindow *window, int w, int h)
 {
@@ -87,7 +124,8 @@ int main()
 
 	//Camera
 	glm::vec3 center(0.0f, 0.0f, 0.0f);
-	camera.setCenter(&center);
+	glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
+	camera.setCenter(&spaceShipPos);
 	camera.setRadius(6.0f);
 	CVK::State::getInstance()->setCamera( &camera);
 
@@ -101,17 +139,8 @@ int main()
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/spaceship.obj");
-	CVK::Node fish("Fish", RESOURCES_PATH "/fish.obj");
-	CVK::Node pig("Pig", RESOURCES_PATH "/piggy.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0); 
-	//Next ones for the pigs
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(-2.0f, 2.3f, 2.0f),  glm::vec3(-0.3f, 0.0f, -0.23f), 1.0));
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(2.0f, 2.3f, -2.0f), glm::vec3(0.0f, 0.0f, 0.4f), 2.0));
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(4.0f, 2.3f, 3.0f),  glm::vec3(-0.23f, 0.0f, -0.1f), 3.0));
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(-5.0f, 0.0f, 6.0f),  glm::vec3(-0.3f, 0.0f, -0.4f), 1.0));
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(5.0f, 2.3f, -3.0f), glm::vec3(0.2f, 0.0f, 0.2f), 2.0));
-	pigsMassPoints.push_back(CVK::MassPoint(glm::vec3(4.0f, 4.3f, 2.5f),  glm::vec3(-0.4f, 0.0f, -0.2f), 3.0));
+	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
 
 	// TODO 4 (b)
 	// Fuellen Sie den global definierten Vektor (quaternions) mit den gewünschten Orientierungen.
@@ -125,6 +154,7 @@ int main()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - oldTime;
 		oldTime = currentTime;
+		calculateFPS(1.0, "OpenGL Window");
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
@@ -147,28 +177,13 @@ int main()
 		modelmatrix = glm::translate(modelmatrix, spaceShipMassPoint.getPosition());
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(1.5,1.5,1.5));
 		spaceship.setModelMatrix(modelmatrix);
+		glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
+		camera.setCenter(&spaceShipPos);
 		spaceship.render();
-
-		//Update and render pigs
-		for(CVK::MassPoint& mp : pigsMassPoints)
-		{
-			mp.numericIntegration(deltaTime);
-			modelmatrix = glm::translate(glm::mat4(1.0f), mp.getPosition());
-			modelmatrix = glm::scale(modelmatrix, glm::vec3(0.5,0.5,0.5));
-			pig.setModelMatrix(modelmatrix);
-			pig.render();
-		}
 		
 		t += deltaTime * 0.01f; //speed = 0.01
 		if(t >= 1.0)
 			t = 0.0f;
-
-		// TODO 4 (b) 
-		// Erweitern Sie die Modelmatrix um Translation und Rotation.
-		// Anmerkung: Verwenden Sie die Variable t.
-		modelmatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
-		fish.setModelMatrix(modelmatrix);
-		fish.render();
 
 		glfwSwapBuffers( window);
 		glfwPollEvents();
