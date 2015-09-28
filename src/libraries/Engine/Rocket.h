@@ -12,9 +12,12 @@
 
 class Rocket: public RigidBody {
 
-public:
+private:
+	glm::vec3 dimensions; /**< dimensions of semi-axes "a", "b" and "c" of the sphere */
 
-	//.......
+
+public:
+	Rocket(float massIN, bool staticIn, glm::vec3 posIN, glm::quat rotIN, glm::vec3 dimensions);
 
 };
 

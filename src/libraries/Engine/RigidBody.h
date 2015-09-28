@@ -25,16 +25,16 @@ class RigidBody {
 
 private:
 
-	float mMass;								/**< body mass */
+	float mMass;							/**< body mass */
 	//float inverseMass;					/**< body inverse mass */	//ka ob nötig
 
-	glm::vec3 mPosition;						/**< body position */
-	glm::vec3 mVelocity;						/**< body velocity */
+	glm::vec3 mPosition;					/**< body position */
+	glm::vec3 mVelocity;					/**< body velocity */
 	//glm::vec3 lastFrameVeloc;				/**< body last frame velocity */	//ka ob nötig
 	glm::quat mRotationQuat;					/**< body rotation quaternion */
 	glm::mat3 mRotationMat;					/**< body rotation matrix */
 	glm::mat3 mInertiaTensor;				/**< body inertia tensor */
-	glm::vec3 mInitInverseInertTensDiagon;	/**< initial inverse inertia tensor diagonal */
+	glm::vec3 mInitInverseInertTensDiagon;		/**< initial inverse inertia tensor diagonal */
 	glm::mat3 mInverseInertiaTensor;			/**< inverse inertia tensor */
 
 	glm::vec3 mAngularVelocity;				/**< angular velocity */
@@ -43,7 +43,7 @@ private:
 	float mTerminalMom;						/**< terminal momentum */	//?
 
 	glm::vec3 mForce;						/**< body force */
-	//bool isStatic;							/**< true if object is static, false if object is dynamic */
+	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
 
@@ -55,9 +55,9 @@ public:
 	 * @param massIN mass
 	 * @param staticIN static object (true) or not (false) (not observed at the moment)
 	 * @param posIN position
-	 * @param sizeIN box half size or sphere radius
+	 * @param rotIN rotation
 	 */
-	RigidBody(float massIN, bool staticIN, glm::vec3 posIN, float sizeIN);
+	RigidBody(float massIN, bool staticIN, glm::vec3 posIN, glm::quat rotIN);
 
 	/** \brief standard constructor
 	*

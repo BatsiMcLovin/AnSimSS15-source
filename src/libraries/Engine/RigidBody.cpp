@@ -13,8 +13,11 @@
 using namespace std;
 
 
-RigidBody::RigidBody(float massIN, bool staticIN, glm::vec3 posIN, float sizeIN){
-	//...
+RigidBody::RigidBody(float massIN, bool staticIN, glm::vec3 posIN, glm::quat rotIN){
+	this->mMass = massIN;
+	this->mIsStatic = staticIN;
+	this->mPosition = posIN;
+	this->mRotationQuat = rotIN;
 }
 
 RigidBody::~RigidBody(){
