@@ -138,6 +138,10 @@ public:
 		this->rotationQuat = rotationQuat;
 	}
 
+	void setInertiaTensor(const glm::mat3& inertia){
+		this->inertiaTensor = inertia;
+	}
+
 };
 
 

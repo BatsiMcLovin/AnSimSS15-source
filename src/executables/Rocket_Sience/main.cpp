@@ -9,8 +9,8 @@
 #include <sstream>
 
 
-const int width = 640;
-const int height = 480;
+const int width = 1080;
+const int height = 720;
 
 GLFWwindow* window;
 
@@ -40,10 +40,10 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			spaceShipMassPoint.applyForce(spaceShipEngineForce * glm::vec3(glm::cos(glm::radians(spaceShipRotAngle)), 0.0f, -glm::sin(glm::radians(spaceShipRotAngle))));
 			break;
     	case GLFW_KEY_LEFT:
-    		spaceShipRotAngle++;
+    		spaceShipRotAngle += 10;
     		break;
     	case GLFW_KEY_RIGHT:
-    		spaceShipRotAngle--;
+    		spaceShipRotAngle -= 10;
     		break;
     }
         
@@ -138,12 +138,9 @@ int main()
     Skybox* skybox = new Skybox(15.0f);
 
 	//Init scene nodes and mass points
-	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/spaceship.obj");
+	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
 	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
-
-	// TODO 4 (b)
-	// Fuellen Sie den global definierten Vektor (quaternions) mit den gewünschten Orientierungen.
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
