@@ -172,7 +172,7 @@ int main()
 		spaceShipMassPoint.numericIntegration(deltaTime);
 		glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
 		modelmatrix = glm::translate(modelmatrix, spaceShipMassPoint.getPosition());
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(1.5,1.5,1.5));
+		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
 		spaceship.setModelMatrix(modelmatrix);
 		glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
 		camera.setCenter(&spaceShipPos);
