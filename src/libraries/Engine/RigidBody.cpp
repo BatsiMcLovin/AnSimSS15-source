@@ -165,7 +165,16 @@ void RigidBody::updateInverseInertiaTensor(){
 }
 
 void RigidBody::updateMomenta(float duration){
-	//...todo!
+	mLinearMomentum = mLinearMomentum + duration * mForce;
+	mAngularMomentum = mAngularMomentum + duration * mTorque;
+}
+
+void RigidBody::calculateTorque(std::vector<glm::vec3> forceApplyPoints, std::vector<glm::vec3> forces){
+	mTorque = glm::vec3(0,0,0);
+
+	for (int i = 0; i < forceApplyPoints.size() ; i++) {
+		mTorque = mTorque + glm::cross(forceApplyPoints[i], forces[i]);
+	}
 }
 
 void RigidBody::reset(float newPosition){

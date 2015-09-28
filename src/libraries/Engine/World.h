@@ -33,10 +33,10 @@ private:
 	float dampCoeff;					/**< damping coefficient */
 	float gravity;						/**< gravity force value */
 
-	int allBodyNum;						/**< number of bodies in the world */
+	int allBodyNum;					/**< number of bodies in the world */
 
-	float duration;								/**< step duration */
-	float terminalVeloc;						/**< terminal velocity */
+	float duration;					/**< step duration */
+	float terminalVeloc;				/**< terminal velocity */
 
 public:
 
