@@ -53,15 +53,13 @@ public:
 	 *
 	 * creates a rigid body instance with given parameters
 	 * @param massIN mass
-	 * @param staticIN static object (true) or not (false) (not observed at the moment)
 	 * @param posIN position
-	 * @param sizeIN box half size or sphere radius
 	 */
-	RigidBody(float massIN, bool staticIN, glm::vec3 posIN, float sizeIN);
+	RigidBody(float massIN, glm::vec3 posIN);
 
 	/** \brief standard constructor
 	*
-	* creates a particle instance
+	* creates a rigidBody instance
 	*/
 	RigidBody();
 
