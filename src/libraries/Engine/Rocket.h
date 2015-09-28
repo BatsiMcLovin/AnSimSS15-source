@@ -14,14 +14,12 @@
 
 class Rocket: public RigidBody {
 
+private:
+	glm::vec3 dimensions; /**< dimensions of semi-axes "a", "b" and "c" of the sphere */
+
+
 public:
-
-	glm::vec3 origin;				/**< origin of the shape = position of RigidBody */
-	//float size						/**< scale/size of the shape */
-	glm::vec3 powerUnit1force;		/**< force of power unit 1 */
-	glm::vec3 powerUnit2force;		/**< force of power unit 2 */
-
-	//.......
+	Rocket(float massIN, bool staticIn, glm::vec3 posIN, glm::quat rotIN, glm::vec3 dimensions);
 
 };
 

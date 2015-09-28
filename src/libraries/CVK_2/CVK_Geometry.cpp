@@ -32,6 +32,10 @@ void CVK::Geometry::createBuffers()
 {
 	m_points = m_vertices.size();
 	m_indices = m_index.size();
+	if (m_vao == INVALID_OGL_VALUE)
+		glGenVertexArrays(1, &m_vao);
+
+	glBindVertexArray(m_vao);
 
 	// create the buffers and bind the data 
 	if ( m_vertexbuffer == INVALID_OGL_VALUE)
@@ -39,23 +43,29 @@ void CVK::Geometry::createBuffers()
 		glGenBuffers(1, &m_vertexbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
 		glBufferData(GL_ARRAY_BUFFER, m_points * sizeof(glm::vec4), &m_vertices[0], GL_STATIC_DRAW);
+		glEnableVertexAttribArray(VERTICES);
+		glVertexAttribPointer( VERTICES, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	if ( m_normalbuffer == INVALID_OGL_VALUE && m_normals.size()>0)
+	if ( m_normalbuffer == INVALID_OGL_VALUE && (m_normals.size()>0))
 	{
 		glGenBuffers(1, &m_normalbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, m_normalbuffer);
 		glBufferData(GL_ARRAY_BUFFER, m_points * sizeof(glm::vec3), &m_normals[0], GL_STATIC_DRAW);
+		glEnableVertexAttribArray(NORMALS);
+		glVertexAttribPointer(NORMALS, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	if ( m_uvbuffer == INVALID_OGL_VALUE && m_uvs.size()>0)
+	if ( m_uvbuffer == INVALID_OGL_VALUE && (m_uvs.size() > 0) )
 	{
 		glGenBuffers(1, &m_uvbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
 		glBufferData(GL_ARRAY_BUFFER, m_points * sizeof(glm::vec2), &m_uvs[0], GL_STATIC_DRAW);
+		glEnableVertexAttribArray(TEXTURECOORDS);
+		glVertexAttribPointer(TEXTURECOORDS, 2, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
-	if ( m_tangentbuffer == INVALID_OGL_VALUE && m_uvs.size()>0)
+	if ( m_tangentbuffer == INVALID_OGL_VALUE && (m_uvs.size()>0))
 	{	
 		if(m_tangents.empty())
 		{	
@@ -64,6 +74,8 @@ void CVK::Geometry::createBuffers()
 		glGenBuffers(1, &m_tangentbuffer);
 		glBindBuffer(GL_ARRAY_BUFFER, m_tangentbuffer);
 		glBufferData(GL_ARRAY_BUFFER, m_tangents.size() * sizeof(glm::vec3), &m_tangents[0], GL_STATIC_DRAW);
+		glEnableVertexAttribArray(TANGENTS);
+		glVertexAttribPointer(TANGENTS, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
 	// Generate a buffer for the indices as well 
@@ -72,30 +84,8 @@ void CVK::Geometry::createBuffers()
 		glGenBuffers(1, &m_indexlist);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexlist);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices * sizeof(unsigned int), &m_index[0] , GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexlist);
 	}
-	
-	if (m_vao == INVALID_OGL_VALUE)
-		glGenVertexArrays(1, &m_vao);
-
-	glBindVertexArray(m_vao);
-	
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexbuffer);
-	glEnableVertexAttribArray(VERTICES);
-	glVertexAttribPointer( VERTICES, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_normalbuffer);
-	glEnableVertexAttribArray(NORMALS);
-	glVertexAttribPointer(NORMALS, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_uvbuffer);
-	glEnableVertexAttribArray(TEXTURECOORDS);
-	glVertexAttribPointer(TEXTURECOORDS, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_tangentbuffer);
-	glEnableVertexAttribArray(TANGENTS);
-	glVertexAttribPointer(TANGENTS, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexlist);
 
 	glBindVertexArray(0);
 	

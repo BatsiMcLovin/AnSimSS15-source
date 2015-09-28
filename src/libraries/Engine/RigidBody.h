@@ -25,27 +25,26 @@ class RigidBody {
 
 private:
 
-	float mass;								/**< body mass */
+	float mMass;							/**< body mass */
 	//float inverseMass;					/**< body inverse mass */	//ka ob nötig
 
-	glm::vec3 position;						/**< body position */
-	glm::vec3 velocity;						/**< body velocity */
+	glm::vec3 mPosition;					/**< body position */
+	glm::vec3 mVelocity;					/**< body velocity */
 	//glm::vec3 lastFrameVeloc;				/**< body last frame velocity */	//ka ob nötig
-	glm::quat rotationQuat;					/**< body rotation quaternion */
-	glm::mat3 rotationMat;					/**< body rotation matrix */
-	glm::mat3 inertiaTensor;				/**< body inertia tensor */
-	glm::vec3 initInverseInertTensDiagon;	/**< initial inverse inertia tensor diagonal */
-	glm::mat3 inverseInertiaTensor;			/**< inverse inertia tensor */
+	glm::quat mRotationQuat;					/**< body rotation quaternion */
+	glm::mat3 mRotationMat;					/**< body rotation matrix */
+	glm::mat3 mInertiaTensor;				/**< body inertia tensor */
+	glm::vec3 mInitInverseInertTensDiagon;		/**< initial inverse inertia tensor diagonal */
+	glm::mat3 mInverseInertiaTensor;			/**< inverse inertia tensor */
 
-	glm::vec3 angularVelocity;				/**< angular velocity */
-	glm::vec3 angularMomentum;				/**< angular momentum */
-	glm::vec3 linearMomentum;				/**< linear momentum */
-	float terminalMom;						/**< terminal momentum */	//?
+	glm::vec3 mAngularVelocity;				/**< angular velocity */
+	glm::vec3 mAngularMomentum;				/**< angular momentum */
+	glm::vec3 mLinearMomentum;				/**< linear momentum */
+	float mTerminalMom;						/**< terminal momentum */	//?
 
-	glm::vec3 force;						/**< body force */
-	//bool isStatic;							/**< true if object is static, false if object is dynamic */
-	glm::mat4 transformMatrix;				/**< transformation matrix */
-
+	glm::vec3 mForce;						/**< body force */
+	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
+	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
 public:
 
@@ -54,6 +53,7 @@ public:
 	 * creates a rigid body instance with given parameters
 	 * @param massIN mass
 	 * @param posIN position
+	 * @param rotIN rotation
 	 */
 	RigidBody(float massIN, glm::vec3 posIN);
 
@@ -113,27 +113,31 @@ public:
 
 	//getter + settter
 	const glm::vec3& getPosition() const {
-		return position;
+		return mPosition;
 	}
 
 	void setPosition(const glm::vec3& position) {
-		this->position = position;
+		this->mPosition = position;
 	}
 
 	const glm::mat3& getRotationMat() const {
-		return rotationMat;
+		return mRotationMat;
 	}
 
 	void setRotationMat(const glm::mat3& rotationMat) {
-		this->rotationMat = rotationMat;
+		this->mRotationMat = rotationMat;
 	}
 
 	const glm::quat& getRotationQuat() const {
-		return rotationQuat;
+		return mRotationQuat;
 	}
 
 	void setRotationQuat(const glm::quat& rotationQuat) {
-		this->rotationQuat = rotationQuat;
+		this->mRotationQuat = rotationQuat;
+	}
+
+	void setInertiaTensor(const glm::mat3& inertia){
+		this->mInertiaTensor = inertia;
 	}
 
 };

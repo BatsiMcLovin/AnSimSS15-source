@@ -14,16 +14,16 @@ using namespace std;
 
 
 RigidBody::RigidBody(float massIN, glm::vec3 posIN){
-	mass = massIN;
+	mMass = massIN;
 	//inverseMass = ((float)1.0)/mass;
 
-	position = posIN;
+	mPosition = posIN;
 
-	velocity = glm::vec3 (0.0f, 0.0f, 0.0f);
-	angularVelocity = glm::vec3 (0.0f, 0.0f, 0.0f);
-	angularMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
-	linearMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
-	force = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mVelocity = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mAngularVelocity = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mAngularMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mLinearMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mForce = glm::vec3 (0.0f, 0.0f, 0.0f);
 
 	//isStatic = staticIN;
 
@@ -33,7 +33,7 @@ RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 	//shape
 
 	float temp1 = World::getInstance()->getTerminalVeloc();
-	terminalMom = temp1 * mass;
+	mTerminalMom = temp1 * mMass;
 }
 
 RigidBody::~RigidBody(){
@@ -44,72 +44,72 @@ void RigidBody::iterate(float duration){
 	updateInverseInertiaTensor();
 
 	//performLinearStep
-	velocity.x = linearMomentum.x / mass;
-	position.x = position.x + velocity.x*duration;
+	mVelocity.x = mLinearMomentum.x / mMass;
+	mPosition.x = mPosition.x + mVelocity.x*duration;
 
-	velocity.y = linearMomentum.y / mass;
-	position.y = position.y + velocity.y*duration;
+	mVelocity.y = mLinearMomentum.y / mMass;
+	mPosition.y = mPosition.y + mVelocity.y*duration;
 
-	velocity.z = linearMomentum.z / mass;
-	position.z = position.z + velocity.z*duration;
+	mVelocity.z = mLinearMomentum.z / mMass;
+	mPosition.z = mPosition.z + mVelocity.z*duration;
 
 	//performAngularStep
 	{ //update angular velocity
-		float a = inverseInertiaTensor[0].x;
-		float b = inverseInertiaTensor[0].y;
-		float c = inverseInertiaTensor[0].z;
-		float d = inverseInertiaTensor[1].x;
-		float e = inverseInertiaTensor[1].y;
-		float f = inverseInertiaTensor[1].z;
-		float g = inverseInertiaTensor[2].x;
-		float h = inverseInertiaTensor[2].y;
-		float i = inverseInertiaTensor[2].z;
+		float a = mInverseInertiaTensor[0].x;
+		float b = mInverseInertiaTensor[0].y;
+		float c = mInverseInertiaTensor[0].z;
+		float d = mInverseInertiaTensor[1].x;
+		float e = mInverseInertiaTensor[1].y;
+		float f = mInverseInertiaTensor[1].z;
+		float g = mInverseInertiaTensor[2].x;
+		float h = mInverseInertiaTensor[2].y;
+		float i = mInverseInertiaTensor[2].z;
 
-		float u = angularMomentum.x;
-		float v = angularMomentum.y;
-		float w = angularMomentum.z;
-		angularVelocity.x = a*u + b*v + c*w;
-		angularVelocity.y = d*u + e*v + f*w;
-		angularVelocity.z = g*u + h*v + i*w;
+		float u = mAngularMomentum.x;
+		float v = mAngularMomentum.y;
+		float w = mAngularMomentum.z;
+		mAngularVelocity.x = a*u + b*v + c*w;
+		mAngularVelocity.y = d*u + e*v + f*w;
+		mAngularVelocity.z = g*u + h*v + i*w;
 	}
-	float angularVelocitySize = sqrt(angularVelocity.x*angularVelocity.x +
-									 angularVelocity.y*angularVelocity.y +
-									 angularVelocity.z*angularVelocity.z);
+	float mAngularVelocitySize = sqrt(mAngularVelocity.x*mAngularVelocity.x +
+									 mAngularVelocity.y*mAngularVelocity.y +
+									 mAngularVelocity.z*mAngularVelocity.z);
 
-	if (angularVelocitySize > 0) {
+	if (mAngularVelocitySize > 0) {
 
-		glm::vec3 rotationAxis = glm::vec3(	angularVelocity.x/angularVelocitySize,
-											angularVelocity.y/angularVelocitySize,
-											angularVelocity.z/angularVelocitySize);
+		glm::vec3 mRotationAxis = glm::vec3(mAngularVelocity.x/mAngularVelocitySize,
+											mAngularVelocity.y/mAngularVelocitySize,
+											mAngularVelocity.z/mAngularVelocitySize);
 
-		float rotationAngle = angularVelocitySize * duration;
+		float rotationAngle = mAngularVelocitySize * duration;
 
 		float ds = cos(rotationAngle/2.0f);
-		float dvx = rotationAxis.x*sin(rotationAngle/2.0f);
-		float dvy = rotationAxis.y*sin(rotationAngle/2.0f);
-		float dvz = rotationAxis.z*sin(rotationAngle/2.0f);
+		float dvx = mRotationAxis.x*sin(rotationAngle/2.0f);
+		float dvy = mRotationAxis.y*sin(rotationAngle/2.0f);
+		float dvz = mRotationAxis.z*sin(rotationAngle/2.0f);
 
-		float s = rotationQuat.w;
-		float vx = rotationQuat.x;
-		float vy = rotationQuat.y;
-		float vz = rotationQuat.z;
+		float s = mRotationQuat.w;
+		float vx = mRotationQuat.x;
+		float vy = mRotationQuat.y;
+		float vz = mRotationQuat.z;
 
-		rotationQuat.w = s*ds - vx*dvx - vy*dvy - vz*dvz;
-		rotationQuat.x = ds*vx + s*dvx + dvy*vz - dvz*vy;
-		rotationQuat.y = ds*vy + s*dvy + dvz*vx - dvx*vz;
-		rotationQuat.z = ds*vz + s*dvz + dvx*vy - dvy*vx;
+		mRotationQuat.w = s*ds - vx*dvx - vy*dvy - vz*dvz;
+		mRotationQuat.x = ds*vx + s*dvx + dvy*vz - dvz*vy;
+		mRotationQuat.y = ds*vy + s*dvy + dvz*vx - dvx*vz;
+		mRotationQuat.z = ds*vz + s*dvz + dvx*vy - dvy*vx;
 	}
 }
 
 void RigidBody::updateRotMatrix(){
 
 	//normalizeQuaternion();
-	glm::normalize(rotationQuat);
+	glm::normalize(mRotationQuat);
 
-	float w = rotationQuat.w;
-	float x = rotationQuat.x;
-	float y = rotationQuat.y;
-	float z = rotationQuat.z;
+	float w = mRotationQuat.w;
+	float x = mRotationQuat.x;
+	float y = mRotationQuat.y;
+	float z = mRotationQuat.z;
 
 	float xx = x * x;
 	float yy = y * y;
@@ -135,33 +135,33 @@ void RigidBody::updateRotMatrix(){
 	m8 = 2.0f*(yz+wx);
 	m9 = 1.0f-2.0f*(xx+yy);
 
-	rotationMat = glm::mat3(m1,m2,m3,m4,m5,m6,m7,m8,m9);
+	mRotationMat = glm::mat3(m1,m2,m3,m4,m5,m6,m7,m8,m9);
 }
 
 void RigidBody::updateInverseInertiaTensor(){
-	float a = rotationMat[0].x;
-	float b = rotationMat[0].y;
-	float c = rotationMat[0].z;
-	float d = rotationMat[1].x;
-	float e = rotationMat[1].y;
-	float f = rotationMat[1].z;
-	float g = rotationMat[2].x;
-	float h = rotationMat[2].y;
-	float i = rotationMat[2].z;
+	float a = mRotationMat[0].x;
+	float b = mRotationMat[0].y;
+	float c = mRotationMat[0].z;
+	float d = mRotationMat[1].x;
+	float e = mRotationMat[1].y;
+	float f = mRotationMat[1].z;
+	float g = mRotationMat[2].x;
+	float h = mRotationMat[2].y;
+	float i = mRotationMat[2].z;
 
-	float u = initInverseInertTensDiagon.x;
-	float v = initInverseInertTensDiagon.y;
-	float w = initInverseInertTensDiagon.z;
+	float u = mInitInverseInertTensDiagon.x;
+	float v = mInitInverseInertTensDiagon.y;
+	float w = mInitInverseInertTensDiagon.z;
 
-	inverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
-	inverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
-	inverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
-	inverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
-	inverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
-	inverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
-	inverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
-	inverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
-	inverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
+	mInverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
+	mInverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
+	mInverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
+	mInverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
+	mInverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
+	mInverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
+	mInverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
+	mInverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
+	mInverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
 }
 
 void RigidBody::updateMomenta(float duration){
