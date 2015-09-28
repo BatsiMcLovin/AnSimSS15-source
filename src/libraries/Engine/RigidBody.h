@@ -40,6 +40,7 @@ private:
 	glm::vec3 mAngularVelocity;				/**< angular velocity */
 	glm::vec3 mAngularMomentum;				/**< angular momentum */
 	glm::vec3 mLinearMomentum;				/**< linear momentum */
+	glm::vec3 mTorque;						/**< Torque */
 	float mTerminalMom;						/**< terminal momentum */	//?
 
 	glm::vec3 mForce;						/**< body force */
@@ -98,6 +99,15 @@ public:
 	 * @return void
 	 */
 	void updateMomenta(float duration);
+
+	/** \brief calculates torque
+	 *
+	 * calculates torque from given Forces
+	 * @param1 array of points
+	 * @param2 array of forces
+	 * @return void
+	 */
+	void calculateTorque(std::vector<glm::vec3> forceApplyPoints, std::vector<glm::vec3> forces);
 
 	//
 	void reset(float newPosition);
