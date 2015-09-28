@@ -8,6 +8,8 @@
 #ifndef ROCKET_H_
 #define ROCKET_H_
 
+#include <glm/glm.hpp>
+#include <vector>
 #include "RigidBody.h"
 
 class Rocket: public RigidBody {

@@ -46,22 +46,20 @@ private:
 	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
-
 public:
 
 	/** \brief constructor
 	 *
 	 * creates a rigid body instance with given parameters
 	 * @param massIN mass
-	 * @param staticIN static object (true) or not (false) (not observed at the moment)
 	 * @param posIN position
 	 * @param rotIN rotation
 	 */
-	RigidBody(float massIN, bool staticIN, glm::vec3 posIN, glm::quat rotIN);
+	RigidBody(float massIN, glm::vec3 posIN);
 
 	/** \brief standard constructor
 	*
-	* creates a particle instance
+	* creates a rigidBody instance
 	*/
 	RigidBody();
 
