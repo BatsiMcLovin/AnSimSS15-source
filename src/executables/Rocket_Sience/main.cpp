@@ -15,7 +15,7 @@ const int height = 720;
 GLFWwindow* window;
 
 //define Camera (Trackball)
-CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 60.0f);
+CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 100.0f);
 CVK::Trackball camera( width, height, &projection);
 
 //*************************************************************************************************************
@@ -135,7 +135,7 @@ int main()
 	CVK::State::getInstance()->updateSceneSettings(darkgrey, 0, white, 1, 10, 1);
 
 	// Create skybox
-    Skybox* skybox = new Skybox(15.0f);
+    Skybox* skybox = new Skybox(30.0f);
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
