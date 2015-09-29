@@ -106,12 +106,18 @@ public:
 
 	/** \brief calculates torque
 	 *
-	 * calculates torque from given Forces
-	 * @param1 array of points
-	 * @param2 array of forces
+	 * calculates torque from given Forces of mForces
 	 * @return void
 	 */
-	void calculateTorque(std::vector<ForceActor> forces);
+	void calculateTorque();
+
+	/** \brief adds force to the mforces vector
+	 *
+	 * @param forces ForceActor with a vector for the point to apply
+	 * 		the force in model space and the force itself
+	 * @return void
+	 */
+	void addForce(ForceActor force);
 
 	//
 	void reset(float newPosition);
@@ -123,6 +129,13 @@ public:
 	 * @return current calculated force
 	 */
 	glm::vec3 calculateForces(bool wgIN);
+
+	/** \brief calculate mForce
+	 *
+	 * calculate mForce from given Forces of mForces
+	 * @return void
+	 */
+	void calculateForce();
 
 
 	//getter + settter

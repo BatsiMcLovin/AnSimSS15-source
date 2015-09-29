@@ -169,12 +169,24 @@ void RigidBody::updateMomenta(float duration){
 	mAngularMomentum = mAngularMomentum + duration * mTorque;
 }
 
-void RigidBody::calculateTorque(std::vector<ForceActor> forces){
+void RigidBody::calculateTorque(){
 	mTorque = glm::vec3(0,0,0);
 
-	for(ForceActor fA : forces){
-		mTorque = mTorque + glm::cross(fA.getPosition(), fA.getForce());
+	for(ForceActor fA : mForces){
+		mTorque += glm::cross(fA.getPosition(), fA.getForce());
 	}
+}
+
+void RigidBody::calculateForce(){
+	mForce = glm::vec3(0,0,0);
+
+	for(ForceActor fA : mForces){
+		mForce += fA.getForce();
+	}
+}
+
+void RigidBody::addForce(ForceActor force){
+	mForces.push_back(force);
 }
 
 void RigidBody::reset(float newPosition){
