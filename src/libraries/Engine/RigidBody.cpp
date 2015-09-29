@@ -32,8 +32,8 @@ RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 
 	//shape
 
-	float temp1 = World::getInstance()->getTerminalVeloc();
-	mTerminalMom = temp1 * mMass;
+//	float temp1 = World::getInstance()->getTerminalVeloc();
+//	mTerminalMom = temp1 * mMass;
 }
 
 RigidBody::~RigidBody(){

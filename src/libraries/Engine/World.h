@@ -13,6 +13,7 @@
 //includes
 #include <vector>
 #include "RigidBody.h"
+#include "Rocket.h"
 #include <GL\glew.h>
 #include <iostream>
 #include "../designPatterns/Singleton.h"

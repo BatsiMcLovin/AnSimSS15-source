@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Skybox.h"
 #include "ShaderSkybox.h"
+#include "Engine/RigidBody.h"
 #include "Engine/Rocket.h"
 
 #include <sstream>
@@ -142,7 +143,7 @@ int main()
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
 	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
-	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
+//	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
