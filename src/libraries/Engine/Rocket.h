@@ -15,11 +15,11 @@
 class Rocket: public RigidBody {
 
 private:
-	glm::vec3 dimensions; /**< dimensions of semi-axes "a", "b" and "c" of the sphere */
+	glm::vec3 mDimensions; /**< dimensions of semi-axes "a", "b" and "c" of the elipsoid */
 
 
 public:
-	Rocket(float massIN, bool staticIn, glm::vec3 posIN, glm::quat rotIN, glm::vec3 dimensions);
+	Rocket(float massIN, glm::vec3 posIN, glm::vec3 dimensions);
 
 };
 

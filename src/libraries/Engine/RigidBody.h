@@ -19,16 +19,17 @@
 #include "ForceActor.h"
 
 
+
 /** \brief RigidBody
  *
  * class for rigid body representation
  */
 class RigidBody {
 
-private:
+protected:
 
 	float mMass;							/**< body mass */
-	//float inverseMass;					/**< body inverse mass */	//ka ob nötig
+	float mInverseMass;					/**< body inverse mass */	//ka ob nötig
 
 	glm::vec3 mPosition;					/**< body position */
 	glm::vec3 mVelocity;					/**< body velocity */
