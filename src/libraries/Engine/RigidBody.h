@@ -16,6 +16,8 @@
 #include <glm/gtx/quaternion.hpp>
 #include <vector>
 
+#include "ForceActor.h"
+
 
 /** \brief RigidBody
  *
@@ -46,6 +48,8 @@ private:
 	glm::vec3 mForce;						/**< body force */
 	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
+
+	std::vector<ForceActor> mForces;
 
 public:
 
@@ -107,7 +111,7 @@ public:
 	 * @param2 array of forces
 	 * @return void
 	 */
-	void calculateTorque(std::vector<glm::vec3> forceApplyPoints, std::vector<glm::vec3> forces);
+	void calculateTorque(std::vector<ForceActor> forces);
 
 	//
 	void reset(float newPosition);
