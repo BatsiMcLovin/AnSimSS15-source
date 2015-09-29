@@ -15,7 +15,7 @@ using namespace std;
 
 RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 	mMass = massIN;
-	//inverseMass = ((float)1.0)/mass;
+	mInverseMass = ((float)1.0)/mMass;
 
 	mPosition = posIN;
 
