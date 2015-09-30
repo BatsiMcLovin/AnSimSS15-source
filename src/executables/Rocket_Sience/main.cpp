@@ -123,13 +123,7 @@ int main()
 
     const char *skyboxShadernames[2] = {SHADERS_PATH "/Minimal.vert", SHADERS_PATH "/SimpleTexture.frag"};
     ShaderSkybox skyboxShader(VERTEX_SHADER_BIT | FRAGMENT_SHADER_BIT, skyboxShadernames);
-    
 
-	//Camera
-	glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
-	camera.setCenter(&spaceShipPos);
-	camera.setRadius(6.0f);
-	CVK::State::getInstance()->setCamera( &camera);
 
 	//Light Sources
 	CVK::Light light = CVK::Light(glm::vec4(0.0, 10.0, 0.0, 1.0), grey, glm::vec3(0, 0, 0), 1.0f, 0.0f);
@@ -146,8 +140,15 @@ int main()
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
-	ForceActor engine1(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.5f));
+	ForceActor engine1(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 0.f, -0.1f));
 	rocket.addForce(engine1);
+
+	//Camera
+	glm:: vec4 rocketPos(rocket.getPosition(), 1.0f);
+	glm::vec3 cameraPos(rocketPos.x, rocketPos.y, rocketPos.z);
+	camera.setCenter(&cameraPos);
+	camera.setRadius(6.0f);
+	CVK::State::getInstance()->setCamera( &camera);
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
@@ -191,8 +192,9 @@ int main()
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
-		spaceShipPos = rocket.getPosition();
-		camera.setCenter(&spaceShipPos);
+		rocketPos = modelmatrix*rocketPos;
+		cameraPos = glm::vec3(rocketPos.x, rocketPos.y, rocketPos.z);
+		camera.setCenter(&cameraPos);
 		spaceship.render();
 		
 		t += deltaTime * 0.01f; //speed = 0.01
