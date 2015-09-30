@@ -140,10 +140,10 @@ int main()
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
-	ForceActor engine1(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(3.0f, 0.0f, 0.0f));
-	//ForceActor engine2(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(3.0f, 0.f, 0.299f));
+	ForceActor engine1(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
+	ForceActor engine2(glm::vec3(-0.1f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
 	rocket.addForce(engine1);
-	//rocket.addForce(engine2);
+	rocket.addForce(engine2);
 
 	//Camera
 	glm:: vec3 rocketPos(rocket.getPosition());
