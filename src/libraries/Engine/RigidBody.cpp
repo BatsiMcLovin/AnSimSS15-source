@@ -41,6 +41,10 @@ RigidBody::~RigidBody(){
 }
 
 void RigidBody::iterate(float duration){
+	calculateForce();
+	calculateTorque();
+	updateMomenta(duration);
+	updateRotMatrix();
 	updateInverseInertiaTensor();
 
 	//performLinearStep
@@ -99,6 +103,8 @@ void RigidBody::iterate(float duration){
 		mRotationQuat.y = ds*vy + s*dvy + dvz*vx - dvx*vz;
 		mRotationQuat.z = ds*vz + s*dvz + dvx*vy - dvy*vx;
 	}
+
+
 }
 
 void RigidBody::updateRotMatrix(){

@@ -102,7 +102,7 @@ int main()
 	// Init GLFW and GLEW
 	glfwInit();
 	CVK::useOpenGL33CoreProfile();
-	window = glfwCreateWindow(width, height, "AnSim Exercise 3", 0, 0);
+	window = glfwCreateWindow(width, height, "Rocket Science", 0, 0);
 	glfwSetWindowPos(window, 100, 50);
 	glfwMakeContextCurrent(window);
 	glfwSetWindowSizeCallback(window, resizeCallback);
@@ -125,7 +125,6 @@ int main()
     
 
 	//Camera
-	glm::vec3 center(0.0f, 0.0f, 0.0f);
 	glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
 	camera.setCenter(&spaceShipPos);
 	camera.setRadius(6.0f);
@@ -143,7 +142,7 @@ int main()
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
 	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
-//	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
+	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
@@ -172,12 +171,18 @@ int main()
 		spaceShader.update();
 
 		//Update and render spaceship
-		spaceShipMassPoint.numericIntegration(deltaTime);
-		glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
-		modelmatrix = glm::translate(modelmatrix, spaceShipMassPoint.getPosition());
+		//spaceShipMassPoint.numericIntegration(deltaTime);
+		rocket.iterate(deltaTime);
+		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
+		glm::mat3 rotationMatrix = rocket.getRotationMat();
+		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
+								glm::vec4(rotationMatrix[1],0.0f),
+								glm::vec4(rotationMatrix[2], 0.0f),
+								glm::vec4(0.f,0.f,0.f,1.f));
+		modelmatrix = glm::translate(modelmatrix, rocket.getPosition());
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
 		spaceship.setModelMatrix(modelmatrix);
-		glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
+		spaceShipPos = spaceShipMassPoint.getPosition();
 		camera.setCenter(&spaceShipPos);
 		spaceship.render();
 		

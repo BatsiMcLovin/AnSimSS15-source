@@ -130,6 +130,8 @@ int main()
 		
 		//Update Camera
 		camera.update(window);
+		glm::vec3 spaceShipPos=spaceShipMassPoint.getPosition();
+		camera.setCenter(&spaceShipPos);
 
 		//Use the skybox shader program
         CVK::State::getInstance()->setShader(&skyboxShader);
