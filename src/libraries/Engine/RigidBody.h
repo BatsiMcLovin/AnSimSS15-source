@@ -50,7 +50,7 @@ protected:
 	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
-	std::vector<ForceActor> mForces;
+	std::vector<&ForceActor> mForces;
 
 public:
 

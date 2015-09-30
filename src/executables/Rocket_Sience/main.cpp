@@ -29,27 +29,15 @@ float spaceShipRotAngle		= 0.0f;  // angle in degree
 
 //*************************************************************************************************************
 
+//initialize engines
+ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
+ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
+
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if(action != GLFW_PRESS)
-    	return;
-
-    switch(key)
-    {
-    	case GLFW_KEY_ESCAPE:
-    		glfwSetWindowShouldClose(window, GL_TRUE);
-    		break;
-    	case GLFW_KEY_S:
-			spaceShipMassPoint.applyForce(spaceShipEngineForce * glm::vec3(glm::cos(glm::radians(spaceShipRotAngle)), 0.0f, -glm::sin(glm::radians(spaceShipRotAngle))));
-			break;
-    	case GLFW_KEY_LEFT:
-    		spaceShipRotAngle += 10;
-    		break;
-    	case GLFW_KEY_RIGHT:
-    		spaceShipRotAngle -= 10;
-    		break;
-    }
-        
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+		engine1.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+	}
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -140,10 +128,8 @@ int main()
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
-	ForceActor engine1(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
-	ForceActor engine2(glm::vec3(-0.1f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
-	rocket.addForce(engine1);
-	rocket.addForce(engine2);
+	rocket.addForce(&engine1);
+	rocket.addForce(&engine2);
 
 	//Camera
 	glm:: vec3 rocketPos(rocket.getPosition());
