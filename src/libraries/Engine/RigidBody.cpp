@@ -192,6 +192,9 @@ void RigidBody::calculateTorque(){
 void RigidBody::calculateForce(){
 	mForce = glm::vec3(0,0,0);
 
+
+	//DIe restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
+	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 	for(ForceActor fA : mForces){
 		glm::vec3 torqueTemp = glm::cross(fA.getPosition(), fA.getForce());
 		mForce += fA.getForce() * ((glm::length(fA.getForce()) - glm::length(torqueTemp)) / glm::length(fA.getForce()));
