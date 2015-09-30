@@ -135,7 +135,7 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+	spaceShipMassPoint = CVK::MassPoint(glm::vec3(35.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
