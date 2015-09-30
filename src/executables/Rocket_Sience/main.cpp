@@ -140,13 +140,14 @@ int main()
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
-	ForceActor engine1(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 0.f, -0.1f));
+	ForceActor engine1(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(0.6f, 0.f, -0.1f));
+	ForceActor engine2(glm::vec3(0.1f, 0.f, 0.f), glm::vec3(0.6f, 0.f, 0.09f));
 	rocket.addForce(engine1);
+	rocket.addForce(engine2);
 
 	//Camera
-	glm:: vec4 rocketPos(rocket.getPosition(), 1.0f);
-	glm::vec3 cameraPos(rocketPos.x, rocketPos.y, rocketPos.z);
-	camera.setCenter(&cameraPos);
+	glm:: vec3 rocketPos(rocket.getPosition());
+	camera.setCenter(&rocketPos);
 	camera.setRadius(6.0f);
 	CVK::State::getInstance()->setCamera( &camera);
 
@@ -181,6 +182,8 @@ int main()
 		rocket.iterate(deltaTime);
 
 		//set modelMatrix
+
+		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
 		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
 		glm::mat3 rotationMatrix = rocket.getRotationMat();
 		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
@@ -192,9 +195,8 @@ int main()
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
-		rocketPos = modelmatrix*rocketPos;
-		cameraPos = glm::vec3(rocketPos.x, rocketPos.y, rocketPos.z);
-		camera.setCenter(&cameraPos);
+		rocketPos = rocket.getPosition();
+		camera.setCenter(&rocketPos);
 		spaceship.render();
 		
 		t += deltaTime * 0.01f; //speed = 0.01
