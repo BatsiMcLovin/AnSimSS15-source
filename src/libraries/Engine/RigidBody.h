@@ -16,6 +16,9 @@
 #include <glm/gtx/quaternion.hpp>
 #include <vector>
 
+#include "ForceActor.h"
+
+
 
 /** \brief RigidBody
  *
@@ -23,10 +26,10 @@
  */
 class RigidBody {
 
-private:
+protected:
 
 	float mMass;							/**< body mass */
-	//float inverseMass;					/**< body inverse mass */	//ka ob nötig
+	float mInverseMass;					/**< body inverse mass */	//ka ob nötig
 
 	glm::vec3 mPosition;					/**< body position */
 	glm::vec3 mVelocity;					/**< body velocity */
@@ -46,6 +49,8 @@ private:
 	glm::vec3 mForce;						/**< body force */
 	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
+
+	std::vector<ForceActor*> mForces;
 
 public:
 
@@ -102,12 +107,18 @@ public:
 
 	/** \brief calculates torque
 	 *
-	 * calculates torque from given Forces
-	 * @param1 array of points
-	 * @param2 array of forces
+	 * calculates torque from given Forces of mForces
 	 * @return void
 	 */
-	void calculateTorque(std::vector<glm::vec3> forceApplyPoints, std::vector<glm::vec3> forces);
+	void calculateTorque();
+
+	/** \brief adds force to the mforces vector
+	 *
+	 * @param forces ForceActor with a vector for the point to apply
+	 * 		the force in model space and the force itself
+	 * @return void
+	 */
+	void addForce(ForceActor* force);
 
 	//
 	void reset(float newPosition);
@@ -119,6 +130,13 @@ public:
 	 * @return current calculated force
 	 */
 	glm::vec3 calculateForces(bool wgIN);
+
+	/** \brief calculate mForce
+	 *
+	 * calculate mForce from given Forces of mForces
+	 * @return void
+	 */
+	void calculateForce();
 
 
 	//getter + settter

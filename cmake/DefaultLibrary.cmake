@@ -27,6 +27,7 @@ add_definitions(-DRESOURCES_PATH="${RESOURCES_PATH}")
 add_definitions(-DGLFW_INCLUDE_GLCOREARB)
 
 add_library(${ProjectId} ${SOURCES} ${HEADER})
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 target_link_libraries(
     ${ProjectId}

@@ -5,6 +5,9 @@
 #include <iostream>
 #include "Skybox.h"
 #include "ShaderSkybox.h"
+#include "Engine/RigidBody.h"
+#include "Engine/Rocket.h"
+#include "Engine/ForceActor.h"
 
 #include <sstream>
 
@@ -26,27 +29,26 @@ float spaceShipRotAngle		= 0.0f;  // angle in degree
 
 //*************************************************************************************************************
 
+//initialize engines
+ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
+ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
+
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    if(action != GLFW_PRESS)
-    	return;
+     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
 
-    switch(key)
-    {
-    	case GLFW_KEY_ESCAPE:
-    		glfwSetWindowShouldClose(window, GL_TRUE);
-    		break;
-    	case GLFW_KEY_S:
-			spaceShipMassPoint.applyForce(spaceShipEngineForce * glm::vec3(glm::cos(glm::radians(spaceShipRotAngle)), 0.0f, -glm::sin(glm::radians(spaceShipRotAngle))));
-			break;
-    	case GLFW_KEY_LEFT:
-    		spaceShipRotAngle += 10;
-    		break;
-    	case GLFW_KEY_RIGHT:
-    		spaceShipRotAngle -= 10;
-    		break;
-    }
-        
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+		engine1.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
+			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+		engine2.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
+			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -100,7 +102,7 @@ int main()
 	// Init GLFW and GLEW
 	glfwInit();
 	CVK::useOpenGL33CoreProfile();
-	window = glfwCreateWindow(width, height, "AnSim Exercise 3", 0, 0);
+	window = glfwCreateWindow(width, height, "Rocket Science", 0, 0);
 	glfwSetWindowPos(window, 100, 50);
 	glfwMakeContextCurrent(window);
 	glfwSetWindowSizeCallback(window, resizeCallback);
@@ -120,14 +122,7 @@ int main()
 
     const char *skyboxShadernames[2] = {SHADERS_PATH "/Minimal.vert", SHADERS_PATH "/SimpleTexture.frag"};
     ShaderSkybox skyboxShader(VERTEX_SHADER_BIT | FRAGMENT_SHADER_BIT, skyboxShadernames);
-    
 
-	//Camera
-	glm::vec3 center(0.0f, 0.0f, 0.0f);
-	glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
-	camera.setCenter(&spaceShipPos);
-	camera.setRadius(6.0f);
-	CVK::State::getInstance()->setCamera( &camera);
 
 	//Light Sources
 	CVK::Light light = CVK::Light(glm::vec4(0.0, 10.0, 0.0, 1.0), grey, glm::vec3(0, 0, 0), 1.0f, 0.0f);
@@ -140,7 +135,18 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+
+	//Create Rocket and initialize engines as ForceActor
+	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
+	rocket.addForce(&engine1);
+	rocket.addForce(&engine2);
+
+	//Camera
+	glm:: vec3 rocketPos(rocket.getPosition());
+	camera.setCenter(&rocketPos);
+	camera.setRadius(6.0f);
+	CVK::State::getInstance()->setCamera( &camera);
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
@@ -168,14 +174,26 @@ int main()
 		CVK::State::getInstance()->setLight(0, &light);
 		spaceShader.update();
 
-		//Update and render spaceship
-		spaceShipMassPoint.numericIntegration(deltaTime);
-		glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
-		modelmatrix = glm::translate(modelmatrix, spaceShipMassPoint.getPosition());
+		//Update physics
+		//spaceShipMassPoint.numericIntegration(deltaTime);
+		rocket.iterate(deltaTime);
+
+		//set modelMatrix
+
+		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
+		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
+		glm::mat3 rotationMatrix = rocket.getRotationMat();
+		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
+								glm::vec4(rotationMatrix[1],0.0f),
+								glm::vec4(rotationMatrix[2], 0.0f),
+								glm::vec4(0.f,0.f,0.f,1.f));
+		modelmatrix = glm::translate(modelmatrix, rocket.getPosition());
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
 		spaceship.setModelMatrix(modelmatrix);
-		glm:: vec3 spaceShipPos(spaceShipMassPoint.getPosition());
-		camera.setCenter(&spaceShipPos);
+
+		//update camera position and render
+		rocketPos = rocket.getRotationMat()*rocket.getPosition();
+		camera.setCenter(&rocketPos);
 		spaceship.render();
 		
 		t += deltaTime * 0.01f; //speed = 0.01

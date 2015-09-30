@@ -15,7 +15,7 @@ using namespace std;
 
 RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 	mMass = massIN;
-	//inverseMass = ((float)1.0)/mass;
+	mInverseMass = ((float)1.0)/mMass;
 
 	mPosition = posIN;
 
@@ -32,8 +32,8 @@ RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 
 	//shape
 
-	float temp1 = World::getInstance()->getTerminalVeloc();
-	mTerminalMom = temp1 * mMass;
+//	float temp1 = World::getInstance()->getTerminalVeloc();
+//	mTerminalMom = temp1 * mMass;
 }
 
 RigidBody::~RigidBody(){
@@ -41,6 +41,10 @@ RigidBody::~RigidBody(){
 }
 
 void RigidBody::iterate(float duration){
+	calculateForce();
+	calculateTorque();
+	updateMomenta(duration);
+	updateRotMatrix();
 	updateInverseInertiaTensor();
 
 	//performLinearStep
@@ -99,6 +103,8 @@ void RigidBody::iterate(float duration){
 		mRotationQuat.y = ds*vy + s*dvy + dvz*vx - dvx*vz;
 		mRotationQuat.z = ds*vz + s*dvz + dvx*vy - dvy*vx;
 	}
+
+
 }
 
 void RigidBody::updateRotMatrix(){
@@ -139,42 +145,67 @@ void RigidBody::updateRotMatrix(){
 }
 
 void RigidBody::updateInverseInertiaTensor(){
-	float a = mRotationMat[0].x;
-	float b = mRotationMat[0].y;
-	float c = mRotationMat[0].z;
-	float d = mRotationMat[1].x;
-	float e = mRotationMat[1].y;
-	float f = mRotationMat[1].z;
-	float g = mRotationMat[2].x;
-	float h = mRotationMat[2].y;
-	float i = mRotationMat[2].z;
+//	float a = mRotationMat[0].x;
+//	float b = mRotationMat[0].y;
+//	float c = mRotationMat[0].z;
+//	float d = mRotationMat[1].x;
+//	float e = mRotationMat[1].y;
+//	float f = mRotationMat[1].z;
+//	float g = mRotationMat[2].x;
+//	float h = mRotationMat[2].y;
+//	float i = mRotationMat[2].z;
+//
+//	float u = mInitInverseInertTensDiagon.x;
+//	float v = mInitInverseInertTensDiagon.y;
+//	float w = mInitInverseInertTensDiagon.z;
+//
+//	mInverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
+//	mInverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
+//	mInverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
+//	mInverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
+//	mInverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
+//	mInverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
+//	mInverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
+//	mInverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
+//	mInverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
 
-	float u = mInitInverseInertTensDiagon.x;
-	float v = mInitInverseInertTensDiagon.y;
-	float w = mInitInverseInertTensDiagon.z;
+	mInverseInertiaTensor= mRotationMat*glm::inverse(mInertiaTensor)*glm::transpose(mRotationMat);
 
-	mInverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
-	mInverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
-	mInverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
-	mInverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
-	mInverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
-	mInverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
-	mInverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
-	mInverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
-	mInverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
 }
 
 void RigidBody::updateMomenta(float duration){
-	mLinearMomentum = mLinearMomentum + duration * mForce;
+	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
+	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
+	if(glm::length(mForce)!=0){
+	mLinearMomentum = mLinearMomentum + duration * mForce * ((glm::length(mForce)-glm::length(mTorque))/glm::length(mForce));
+	}
+	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * mTorque;
+	std::cout<< "AngularMomentumX is: "<< mAngularMomentum.x << "|| AngularMomentumY is: "<<mAngularMomentum.y <<"|| AngularMomentumZ is: "<<mAngularMomentum.z<< endl;
 }
 
-void RigidBody::calculateTorque(std::vector<glm::vec3> forceApplyPoints, std::vector<glm::vec3> forces){
+void RigidBody::calculateTorque(){
 	mTorque = glm::vec3(0,0,0);
 
-	for (int i = 0; i < forceApplyPoints.size() ; i++) {
-		mTorque = mTorque + glm::cross(forceApplyPoints[i], forces[i]);
+	for(ForceActor* fA : mForces){
+		mTorque += glm::cross(fA->getPosition(), fA->getForce());
+		std::cout<< "TorqueX is: "<< mTorque.x << "|| TorqueY is: "<<mTorque.y <<"|| TorqueZ is: "<<mTorque.z<< endl;
 	}
+}
+
+void RigidBody::calculateForce(){
+	mForce = glm::vec3(0,0,0);
+	for(ForceActor* fA : mForces){
+		//if(glm::length(fA->getForce())!=0){
+		//glm::vec3 torqueTemp = glm::cross(fA->getPosition(), fA->getForce());
+		mForce += fA->getForce();// * ((glm::length(fA->getForce()) - glm::length(torqueTemp)) / glm::length(fA->getForce()));
+		//}
+		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
+	}
+}
+
+void RigidBody::addForce(ForceActor* force){
+	mForces.push_back(force);
 }
 
 void RigidBody::reset(float newPosition){
