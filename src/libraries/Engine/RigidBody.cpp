@@ -174,7 +174,11 @@ void RigidBody::updateInverseInertiaTensor(){
 }
 
 void RigidBody::updateMomenta(float duration){
-	mLinearMomentum = mLinearMomentum + duration * mForce;	// * (glm::length(mTorque) / (glm::length(mTorque)- glm::length(mForce)));
+	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
+	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
+	if(glm::length(mForce)!=0){
+	mLinearMomentum = mLinearMomentum + duration * mForce * ((glm::length(mForce)-glm::length(mTorque))/glm::length(mForce));
+	}
 	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * mTorque;
 	std::cout<< "AngularMomentumX is: "<< mAngularMomentum.x << "|| AngularMomentumY is: "<<mAngularMomentum.y <<"|| AngularMomentumZ is: "<<mAngularMomentum.z<< endl;
@@ -191,15 +195,11 @@ void RigidBody::calculateTorque(){
 
 void RigidBody::calculateForce(){
 	mForce = glm::vec3(0,0,0);
-
-
-	//DIe restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
-	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 	for(ForceActor* fA : mForces){
-		if(glm::length(fA->getForce())!=0){
-		glm::vec3 torqueTemp = glm::cross(fA->getPosition(), fA->getForce());
-		mForce += fA->getForce() * ((glm::length(fA->getForce()) - glm::length(torqueTemp)) / glm::length(fA->getForce()));
-		}
+		//if(glm::length(fA->getForce())!=0){
+		//glm::vec3 torqueTemp = glm::cross(fA->getPosition(), fA->getForce());
+		mForce += fA->getForce();// * ((glm::length(fA->getForce()) - glm::length(torqueTemp)) / glm::length(fA->getForce()));
+		//}
 		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
 	}
 }

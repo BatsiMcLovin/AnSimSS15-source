@@ -40,9 +40,15 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
 		engine1.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
 	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
+			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		engine1.setForce(glm::vec3(-0.2f, 0.0f, 0.0f));
+		engine2.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
 	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
+			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -186,7 +192,7 @@ int main()
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
-		rocketPos = rocket.getPosition();
+		rocketPos = rocket.getRotationMat()*rocket.getPosition();
 		camera.setCenter(&rocketPos);
 		spaceship.render();
 		
