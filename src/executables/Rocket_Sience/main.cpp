@@ -35,8 +35,13 @@ ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
+
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
 		engine1.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+		engine1.setForce(glm::vec3(-0.2f, 0.0f, 0.0f));
 	}
 }
 

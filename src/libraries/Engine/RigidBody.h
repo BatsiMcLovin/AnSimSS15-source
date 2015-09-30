@@ -50,7 +50,7 @@ protected:
 	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
-	std::vector<&ForceActor> mForces;
+	std::vector<ForceActor*> mForces;
 
 public:
 
@@ -118,7 +118,7 @@ public:
 	 * 		the force in model space and the force itself
 	 * @return void
 	 */
-	void addForce(ForceActor force);
+	void addForce(ForceActor* force);
 
 	//
 	void reset(float newPosition);
