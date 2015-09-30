@@ -7,6 +7,7 @@
 #include "ShaderSkybox.h"
 #include "Engine/RigidBody.h"
 #include "Engine/Rocket.h"
+#include "Engine/ForceActor.h"
 
 #include <sstream>
 
@@ -141,8 +142,12 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 2.3f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+
+	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(1.0, 3.0, 1.0));
+	ForceActor engine1(glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.5f));
+	rocket.addForce(engine1);
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
@@ -170,9 +175,11 @@ int main()
 		CVK::State::getInstance()->setLight(0, &light);
 		spaceShader.update();
 
-		//Update and render spaceship
+		//Update physics
 		//spaceShipMassPoint.numericIntegration(deltaTime);
 		rocket.iterate(deltaTime);
+
+		//set modelMatrix
 		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
 		glm::mat3 rotationMatrix = rocket.getRotationMat();
 		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
@@ -182,7 +189,9 @@ int main()
 		modelmatrix = glm::translate(modelmatrix, rocket.getPosition());
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
 		spaceship.setModelMatrix(modelmatrix);
-		spaceShipPos = spaceShipMassPoint.getPosition();
+
+		//update camera position and render
+		spaceShipPos = rocket.getPosition();
 		camera.setCenter(&spaceShipPos);
 		spaceship.render();
 		

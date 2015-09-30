@@ -145,29 +145,32 @@ void RigidBody::updateRotMatrix(){
 }
 
 void RigidBody::updateInverseInertiaTensor(){
-	float a = mRotationMat[0].x;
-	float b = mRotationMat[0].y;
-	float c = mRotationMat[0].z;
-	float d = mRotationMat[1].x;
-	float e = mRotationMat[1].y;
-	float f = mRotationMat[1].z;
-	float g = mRotationMat[2].x;
-	float h = mRotationMat[2].y;
-	float i = mRotationMat[2].z;
+//	float a = mRotationMat[0].x;
+//	float b = mRotationMat[0].y;
+//	float c = mRotationMat[0].z;
+//	float d = mRotationMat[1].x;
+//	float e = mRotationMat[1].y;
+//	float f = mRotationMat[1].z;
+//	float g = mRotationMat[2].x;
+//	float h = mRotationMat[2].y;
+//	float i = mRotationMat[2].z;
+//
+//	float u = mInitInverseInertTensDiagon.x;
+//	float v = mInitInverseInertTensDiagon.y;
+//	float w = mInitInverseInertTensDiagon.z;
+//
+//	mInverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
+//	mInverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
+//	mInverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
+//	mInverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
+//	mInverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
+//	mInverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
+//	mInverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
+//	mInverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
+//	mInverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
 
-	float u = mInitInverseInertTensDiagon.x;
-	float v = mInitInverseInertTensDiagon.y;
-	float w = mInitInverseInertTensDiagon.z;
+	mInverseInertiaTensor= mRotationMat*glm::inverse(mInertiaTensor)*glm::transpose(mRotationMat);
 
-	mInverseInertiaTensor[0].x = u*a*a + b*b*v + c*c*w;
-	mInverseInertiaTensor[0].y = a*d*u + b*e*v + c*f*w;
-	mInverseInertiaTensor[0].z = a*g*u + b*h*v + c*i*w;
-	mInverseInertiaTensor[1].x = a*d*u + b*e*v + c*f*w;
-	mInverseInertiaTensor[1].y = u*d*d + e*e*v + f*f*w;
-	mInverseInertiaTensor[1].z = d*g*u + e*h*v + f*i*w;
-	mInverseInertiaTensor[2].x = a*g*u + b*h*v + c*i*w;
-	mInverseInertiaTensor[2].y = d*g*u + e*h*v + f*i*w;
-	mInverseInertiaTensor[2].z = u*g*g + h*h*v + i*i*w;
 }
 
 void RigidBody::updateMomenta(float duration){
