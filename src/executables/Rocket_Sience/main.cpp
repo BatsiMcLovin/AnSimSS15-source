@@ -32,22 +32,57 @@ float spaceShipRotAngle		= 0.0f;  // angle in degree
 //initialize engines
 ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
 ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
+ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
+ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
+ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
+ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
+ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
      if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		engine1.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+		engine1.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
 			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		engine2.setForce(glm::vec3(0.2f, 0.0f, 0.0f));
+		engine2.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
 			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+		engine3.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
+			engine3.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+		engine4.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
+			engine4.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
+		engine5.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE){
+			engine5.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
+		engine6.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
+			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+		}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
+		engine7.setForce(glm::vec3(5.0f, 0.0f, 0.0f));
+	}
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
+			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 }
 
@@ -141,6 +176,11 @@ int main()
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
 	rocket.addForce(&engine1);
 	rocket.addForce(&engine2);
+	rocket.addForce(&engine3);
+	rocket.addForce(&engine4);
+	rocket.addForce(&engine5);
+	rocket.addForce(&engine6);
+	rocket.addForce(&engine7);
 
 	//Camera
 	glm:: vec3 rocketPos(rocket.getPosition());
