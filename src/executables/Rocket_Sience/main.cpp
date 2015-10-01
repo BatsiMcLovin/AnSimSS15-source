@@ -135,7 +135,7 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(35.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
 
 	//Create Rocket and initialize engines as ForceActor
 	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
@@ -187,12 +187,12 @@ int main()
 								glm::vec4(rotationMatrix[1],0.0f),
 								glm::vec4(rotationMatrix[2], 0.0f),
 								glm::vec4(0.f,0.f,0.f,1.f));
-		modelmatrix = glm::translate(modelmatrix, rocket.getPosition());
+		modelmatrix = glm::translate(glm::mat4(1.0f), rocket.getPosition()) * modelmatrix;
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
-		rocketPos = rocket.getRotationMat()*rocket.getPosition();
+		rocketPos = rocket.getPosition();
 		camera.setCenter(&rocketPos);
 		spaceship.render();
 		
