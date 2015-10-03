@@ -23,9 +23,10 @@ CVK::Trackball camera( width, height, &projection);
 
 //*************************************************************************************************************
 // space ship
-CVK::MassPoint spaceShipMassPoint;
+CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
 float spaceShipEngineForce 	= 10.0f;
 float spaceShipRotAngle		= 0.0f;  // angle in degree
+Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
 
 //*************************************************************************************************************
 
@@ -84,6 +85,9 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
+	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
+		rocket.reset(glm::vec3(0,0,0));
+	}
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -170,10 +174,8 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	//First mass point for the spaceship
-	spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
 
 	//Create Rocket and initialize engines as ForceActor
-	Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
 	rocket.addForce(&engine1);
 	rocket.addForce(&engine2);
 	rocket.addForce(&engine3);

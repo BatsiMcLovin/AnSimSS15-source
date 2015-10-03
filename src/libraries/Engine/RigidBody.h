@@ -121,7 +121,7 @@ public:
 	void addForce(ForceActor* force);
 
 	//
-	void reset(float newPosition);
+	void reset(glm::vec3 newPosition);
 
 
 	/** \brief calculate forces
