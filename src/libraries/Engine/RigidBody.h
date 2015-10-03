@@ -39,6 +39,7 @@ protected:
 	glm::mat3 mInertiaTensor;				/**< body inertia tensor */
 	glm::vec3 mInitInverseInertTensDiagon;		/**< initial inverse inertia tensor diagonal */
 	glm::mat3 mInverseInertiaTensor;			/**< inverse inertia tensor */
+	glm::vec3 mStartingDirection;			/**< direction in which the rocket will start */
 
 	glm::vec3 mAngularVelocity;				/**< angular velocity */
 	glm::vec3 mAngularMomentum;				/**< angular momentum */

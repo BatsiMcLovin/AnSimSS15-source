@@ -8,9 +8,11 @@
 
 //includes
 #include "RigidBody.h"
-#include "World.h"
+#include "Engine/World.h"
 
 using namespace std;
+
+//World *world = World::getInstance();
 
 
 RigidBody::RigidBody(float massIN, glm::vec3 posIN){
@@ -24,6 +26,8 @@ RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 	mAngularMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
 	mLinearMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
 	mForce = glm::vec3 (0.0f, 0.0f, 0.0f);
+	mStartingDirection = glm::vec3(glm::radians(0.f), glm::radians(0.f), glm::radians(-90.f));
+	mRotationQuat=glm::quat(mStartingDirection);
 
 	//isStatic = staticIN;
 
@@ -177,7 +181,7 @@ void RigidBody::updateMomenta(float duration){
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 	if(glm::length(mForce)!=0){
-	mLinearMomentum = mLinearMomentum + duration * getRotationMat() * mForce * ((glm::length(mForce)-glm::length(mTorque))/glm::length(mForce));
+	mLinearMomentum = mLinearMomentum + duration * getRotationMat() *mForce * ((glm::length(mForce)-glm::length(mTorque))/glm::length(mForce));
 	}
 	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * mTorque;
@@ -200,7 +204,9 @@ void RigidBody::calculateForce(){
 		//glm::vec3 torqueTemp = glm::cross(fA->getPosition(), fA->getForce());
 		mForce += fA->getForce();// * ((glm::length(fA->getForce()) - glm::length(torqueTemp)) / glm::length(fA->getForce()));
 		//}
-		mForce.y = mForce.y + mMass * - 0.981; //force of gravity
+		mForce= getRotationMat()* mForce;
+		mForce.y = mForce.y + mMass * - 0.0981; //force of gravity
+		mForce= glm::inverse(getRotationMat()) * mForce;
 		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
 	}
 }
@@ -215,6 +221,6 @@ void RigidBody::reset(glm::vec3 newPosition){
 	mAngularVelocity = glm::vec3(0,0,0);
 	mAngularMomentum = glm::vec3(0,0,0);
 	mLinearMomentum = glm::vec3(0,0,0);
-	mRotationQuat = glm::quat(1,0,0,0);
+	mRotationQuat=glm::quat(mStartingDirection);
 }
 

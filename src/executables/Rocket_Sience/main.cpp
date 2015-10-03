@@ -8,6 +8,8 @@
 #include "Engine/RigidBody.h"
 #include "Engine/Rocket.h"
 #include "Engine/ForceActor.h"
+#include "Engine/World.h"
+#include "designPatterns/Singleton.h"
 
 #include <sstream>
 
@@ -21,9 +23,10 @@ GLFWwindow* window;
 CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 100.0f);
 CVK::Trackball camera( width, height, &projection);
 
+
 //*************************************************************************************************************
 // space ship
-CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
+CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 757000.0);
 float spaceShipEngineForce 	= 10.0f;
 float spaceShipRotAngle		= 0.0f;  // angle in degree
 Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
@@ -80,7 +83,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
-		engine7.setForce(glm::vec3(5.0f, 0.0f, 0.0f));
+		engine7.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -148,6 +151,8 @@ int main()
 	glfwSetKeyCallback(window, keyCallback);
 	glewInit();
 
+	//set gravity; World Singleton does not work yet
+	//World::getInstance()->setGravity(9.81);
 	CVK::State::getInstance()->setBackgroundColor( white);
 	glm::vec3 BgCol = CVK::State::getInstance()->getBackgroundColor();
 	glClearColor( BgCol.r, BgCol.g, BgCol.b, 0.0);
