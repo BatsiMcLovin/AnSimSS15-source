@@ -69,7 +69,7 @@ Skybox::Skybox(const float size)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     // load a skybox texture
-    m_texture = new CVK::Texture(RESOURCES_PATH "/skybox_space.png");
+    m_texture = new CVK::Texture(RESOURCES_PATH "/skybox_space3.png");
 }
 
 Skybox::~Skybox()

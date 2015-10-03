@@ -212,9 +212,9 @@ int main()
 		camera.update(window);
 
 		//Use the skybox shader program
-        CVK::State::getInstance()->setShader(&skyboxShader);
-        CVK::State::getInstance()->getShader()->update();
-        skybox->render();
+		CVK::State::getInstance()->setShader(&skyboxShader);
+		CVK::State::getInstance()->getShader()->update();
+		skybox->render();
 
 		//Use phong shader to render the scene
 		CVK::State::getInstance()->setShader(&spaceShader);
@@ -225,6 +225,10 @@ int main()
 		//spaceShipMassPoint.numericIntegration(deltaTime);
 		rocket.iterate(deltaTime);
 
+		rocketPos = rocket.getPosition();
+		if(rocketPos.y <= -28.5){
+			rocket.reset(glm::vec3(rocketPos.x, -28.5, rocketPos.z));
+		}
 		//set modelMatrix
 
 		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
@@ -239,13 +243,8 @@ int main()
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
-		rocketPos = rocket.getPosition();
 		camera.setCenter(&rocketPos);
 		spaceship.render();
-		
-		t += deltaTime * 0.01f; //speed = 0.01
-		if(t >= 1.0)
-			t = 0.0f;
 
 		glfwSwapBuffers( window);
 		glfwPollEvents();

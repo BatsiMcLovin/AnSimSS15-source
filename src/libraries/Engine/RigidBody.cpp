@@ -57,6 +57,7 @@ void RigidBody::iterate(float duration){
 
 	mVelocity.y = mLinearMomentum.y / mMass;
 	mPosition.y = mPosition.y + mVelocity.y*duration;
+	cout<<"Position in Y is: "<< mPosition.y << endl;
 
 	mVelocity.z = mLinearMomentum.z / mMass;
 	mPosition.z = mPosition.z + mVelocity.z*duration;
@@ -193,8 +194,8 @@ void RigidBody::calculateTorque(){
 
 	for(ForceActor* fA : mForces){
 		mTorque += glm::cross(fA->getPosition(), fA->getForce());
-		std::cout<< "TorqueX is: "<< mTorque.x << "|| TorqueY is: "<<mTorque.y <<"|| TorqueZ is: "<<mTorque.z<< endl;
 	}
+		std::cout<< "TorqueX is: "<< mTorque.x << "|| TorqueY is: "<<mTorque.y <<"|| TorqueZ is: "<<mTorque.z<< endl;
 }
 
 void RigidBody::calculateForce(){
@@ -207,8 +208,8 @@ void RigidBody::calculateForce(){
 		mForce= getRotationMat()* mForce;
 		mForce.y = mForce.y + mMass * - 0.0981; //force of gravity
 		mForce= glm::inverse(getRotationMat()) * mForce;
-		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
 	}
+		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
 }
 
 void RigidBody::addForce(ForceActor* force){
