@@ -200,6 +200,7 @@ void RigidBody::calculateForce(){
 		//glm::vec3 torqueTemp = glm::cross(fA->getPosition(), fA->getForce());
 		mForce += fA->getForce();// * ((glm::length(fA->getForce()) - glm::length(torqueTemp)) / glm::length(fA->getForce()));
 		//}
+		mForce.y = mForce.y + mMass * - 0.981; //force of gravity
 		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
 	}
 }
