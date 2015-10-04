@@ -44,10 +44,10 @@ RigidBody::~RigidBody(){
 	//...
 }
 
-void RigidBody::iterate(float duration){
+void RigidBody::iterate(float duration, float gravityFac){
 	calculateForce();
 	calculateTorque();
-	updateMomenta(duration);
+	updateMomenta(duration, gravityFac);
 	updateRotMatrix();
 	updateInverseInertiaTensor();
 
@@ -180,7 +180,7 @@ void RigidBody::updateInverseInertiaTensor(){
 
 }
 //in world space
-void RigidBody::updateMomenta(float duration){
+void RigidBody::updateMomenta(float duration, float gravity){
 
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
@@ -189,7 +189,7 @@ void RigidBody::updateMomenta(float duration){
 		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
 	}
 	glm::vec3 rotatedForce= getRotationMat() * mForce;
-	rotatedForce.y = rotatedForce.y + mMass * - 9.81; //force of gravity
+	rotatedForce.y = rotatedForce.y + mMass * -gravity; //force of gravity
 	mLinearMomentum = mLinearMomentum + duration * rotatedForce;
 	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * getRotationMat() * mTorque;

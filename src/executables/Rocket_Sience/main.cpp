@@ -28,6 +28,9 @@ const float skyboxSize = 2000;
 //rocket can't go lower than this point
 float lowestY = -skyboxSize+semiAxisX*rocketScale;
 
+//for adjusting gravity
+float gravity = 9.81f;
+
 
 GLFWwindow* window;
 
@@ -100,6 +103,26 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
 		rocket.reset(glm::vec3(0,lowestY,0), glm::quat(rocket.getStartingDirection()));
+	}
+	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
+		gravity = 0.0f;
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
+		gravity = 9.81f;
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS){
+		gravity += 0.01;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_RELEASE){
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS){
+		gravity -= 0.01;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_RELEASE){
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
 	}
 }
 
@@ -233,7 +256,7 @@ int main()
 
 		//Update physics
 		//spaceShipMassPoint.numericIntegration(deltaTime);
-		rocket.iterate(deltaTime);
+		rocket.iterate(deltaTime, gravity);
 
 		rocketPos = rocket.getPosition();
 		if(rocketPos.y <= lowestY){

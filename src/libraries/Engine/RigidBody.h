@@ -82,7 +82,7 @@ public:
 	 * @param duration time length of a simulation step
 	 * @return void
 	 */
-	void iterate(float duration);
+	void iterate(float duration, float gravity);
 
 	/** \brief update rotations matrix
 	 *
@@ -104,7 +104,7 @@ public:
 	 * @param duration time length of a simulation step
 	 * @return void
 	 */
-	void updateMomenta(float duration);
+	void updateMomenta(float duration, float gravity);
 
 	/** \brief calculates torque
 	 *
