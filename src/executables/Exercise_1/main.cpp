@@ -10,6 +10,8 @@
 #define WIDTH 800
 #define HEIGHT 800
 
+#define PARTICLE_COUNT 200
+
 GLFWwindow* window;
 
 //define Camera (Trackball)
@@ -19,6 +21,39 @@ CVK::Trackball cam_trackball( WIDTH, HEIGHT, &projection);
 
 CVK::HermiteSpline *mPath;
 CVK::LineStrip* line;
+
+////--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//
+//// Generate two buffers, bind them and initialize their data stores
+//glGenBuffers(2, buffers);
+//glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+//glBufferData(GL_ARRAY_BUFFER, PARTICLE_COUNT * sizeof(glm::vec4), NULL, GL_DYNAMIC_COPY);
+//// Map the position buffer and fill it with random vectors
+//glm::vec4 * positions = (glm::vec4 *)glMapBufferRange(GL_ARRAY_BUFFER, 0, PARTICLE_COUNT * sizeof(glm::vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+//for (i = 0; i < PARTICLE_COUNT; i++){
+//	positions[i] = vmath::vec4(random_vector(-10.0f, 10.0f), random_float());
+//	}
+//glUnmapBuffer(GL_ARRAY_BUFFER);
+//
+//// Initialization of the velocity buffer - also filled with random vectors
+//glBindBuffer(GL_ARRAY_BUFFER, velocity_buffer);
+//glBufferData(GL_ARRAY_BUFFER,
+//PARTICLE_COUNT * sizeof(vmath::vec4),
+//NULL,
+//GL_DYNAMIC_COPY);
+//vmath::vec4 * velocities = (vmath::vec4 *)
+//glMapBufferRange(GL_ARRAY_BUFFER,
+//0,
+//PARTICLE_COUNT * sizeof(vmath::vec4),
+//GL_MAP_WRITE_BIT |
+//GL_MAP_INVALIDATE_BUFFER_BIT);
+//for (i = 0; i < PARTICLE_COUNT; i++)
+//{
+//velocities[i] = vmath::vec4(random_vector(-0.1f, 0.1f), 0.0f);
+//}
+//glUnmapBuffer(GL_ARRAY_BUFFER);
+//
+////--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 void resizeCallback( GLFWwindow *window, int w, int h)
