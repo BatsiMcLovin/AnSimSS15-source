@@ -122,7 +122,7 @@ public:
 	void addForce(ForceActor* force);
 
 	//
-	void reset(glm::vec3 newPosition);
+	void reset(glm::vec3 newPosition, glm::quat rotQuat);
 
 
 	/** \brief calculate forces
@@ -169,6 +169,13 @@ public:
 		this->mInertiaTensor = inertia;
 	}
 
+	const glm::vec3& getStartingDirection() const {
+		return mStartingDirection;
+	}
+
+	void setStartingDirection(const glm::vec3& startingDirection) {
+		mStartingDirection = startingDirection;
+	}
 };
 
 

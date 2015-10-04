@@ -221,12 +221,12 @@ void RigidBody::addForce(ForceActor* force){
 	mForces.push_back(force);
 }
 
-void RigidBody::reset(glm::vec3 newPosition){
+void RigidBody::reset(glm::vec3 newPosition, glm::quat rotQuat){
 	mPosition = newPosition;
 	mVelocity = glm::vec3(0,0,0);
 	mAngularVelocity = glm::vec3(0,0,0);
 	mAngularMomentum = glm::vec3(0,0,0);
 	mLinearMomentum = glm::vec3(0,0,0);
-	mRotationQuat=glm::quat(mStartingDirection);
+	mRotationQuat=rotQuat;
 }
 

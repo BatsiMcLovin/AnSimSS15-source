@@ -17,29 +17,39 @@
 const int width = 1080;
 const int height = 720;
 
+//define dimensions for rocket and skybox
+const float rocketScale = 7.5f;
+const float semiAxisX = 3.0f;
+const float semiAxisY = 1.0f;
+const float semiAxisZ = 1.0f;
+
+const float skyboxSize = 2000;
+
+//rocket can't go lower than this point
+float lowestY = -skyboxSize+semiAxisX*rocketScale;
+
+
 GLFWwindow* window;
 
 //define Camera (Trackball)
-CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 100.0f);
+CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 10000.0f);
 CVK::Trackball camera( width, height, &projection);
 
 
 //*************************************************************************************************************
 // space ship
-CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 2046000.0);
-float spaceShipEngineForce 	= 10.0f;
-float spaceShipRotAngle		= 0.0f;  // angle in degree
-Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
+CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 272800.0*rocketScale);
+Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), rocketScale*glm::vec3(3.0, 1.0, 1.0));
 
 //*************************************************************************************************************
 
 //initialize engines
-ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
-ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
-ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
-ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
-ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
-ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
+ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -rocketScale));
+ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, rocketScale));
+ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f));
+ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
+ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f));
+ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
 ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -89,7 +99,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
-		rocket.reset(glm::vec3(0,0,0));
+		rocket.reset(glm::vec3(0,lowestY,0), glm::quat(rocket.getStartingDirection()));
 	}
 }
 
@@ -174,7 +184,7 @@ int main()
 	CVK::State::getInstance()->updateSceneSettings(darkgrey, 0, white, 1, 10, 1);
 
 	// Create skybox
-    Skybox* skybox = new Skybox(30.0f);
+    Skybox* skybox = new Skybox(skyboxSize);
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
@@ -192,7 +202,7 @@ int main()
 	//Camera
 	glm:: vec3 rocketPos(rocket.getPosition());
 	camera.setCenter(&rocketPos);
-	camera.setRadius(6.0f);
+	camera.setRadius(120.0f);
 	CVK::State::getInstance()->setCamera( &camera);
 
 	float deltaTime = 0.0f;
@@ -226,8 +236,8 @@ int main()
 		rocket.iterate(deltaTime);
 
 		rocketPos = rocket.getPosition();
-		if(rocketPos.y <= -28.5){
-			rocket.reset(glm::vec3(rocketPos.x, -28.5, rocketPos.z));
+		if(rocketPos.y <= lowestY){
+			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
 		}
 		//set modelMatrix
 
@@ -239,7 +249,7 @@ int main()
 								glm::vec4(rotationMatrix[2], 0.0f),
 								glm::vec4(0.f,0.f,0.f,1.f));
 		modelmatrix = glm::translate(glm::mat4(1.0f), rocket.getPosition()) * modelmatrix;
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
+		modelmatrix = glm::scale(modelmatrix, glm::vec3(rocketScale, rocketScale, rocketScale));
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
