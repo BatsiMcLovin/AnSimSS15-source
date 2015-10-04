@@ -272,10 +272,6 @@ int main()
 		//spaceShipMassPoint.numericIntegration(deltaTime);
 		rocket.iterate(deltaTime, gravity);
 
-		rocketPos = rocket.getPosition();
-		if(rocketPos.y <= lowestY){
-			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
-		}
 		//set modelMatrix
 
 		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
@@ -290,6 +286,10 @@ int main()
 		spaceship.setModelMatrix(modelmatrix);
 
 		//update camera position and render
+		rocketPos = rocket.getPosition();
+		if(rocketPos.y <= lowestY){
+			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
+		}
 		camera.setCenter(&rocketPos);
 		spaceship.render();
 
