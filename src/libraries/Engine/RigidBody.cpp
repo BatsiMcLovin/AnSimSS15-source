@@ -189,6 +189,7 @@ void RigidBody::updateMomenta(float duration){
 	std::cout<< "AngularMomentumX is: "<< mAngularMomentum.x << "|| AngularMomentumY is: "<<mAngularMomentum.y <<"|| AngularMomentumZ is: "<<mAngularMomentum.z<< endl;
 }
 
+//in model space
 void RigidBody::calculateTorque(){
 	mTorque = glm::vec3(0,0,0);
 
@@ -198,6 +199,7 @@ void RigidBody::calculateTorque(){
 		std::cout<< "TorqueX is: "<< mTorque.x << "|| TorqueY is: "<<mTorque.y <<"|| TorqueZ is: "<<mTorque.z<< endl;
 }
 
+//in model space
 void RigidBody::calculateForce(){
 	mForce = glm::vec3(0,0,0);
 	for(ForceActor* fA : mForces){
@@ -209,7 +211,9 @@ void RigidBody::calculateForce(){
 		mForce.y = mForce.y + mMass * - 0.0981; //force of gravity
 		mForce= glm::inverse(getRotationMat()) * mForce;
 	}
+		mForce= getRotationMat()* mForce;
 		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
+		mForce= glm::inverse(getRotationMat()) * mForce;
 }
 
 void RigidBody::addForce(ForceActor* force){

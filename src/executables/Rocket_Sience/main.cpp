@@ -47,37 +47,37 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
      if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		engine1.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
 			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		engine2.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine2.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
 			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-		engine3.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine3.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
 			engine3.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-		engine4.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine4.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
 			engine4.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
-		engine5.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+		engine5.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE){
 			engine5.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
-		engine6.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+		engine6.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
 			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
