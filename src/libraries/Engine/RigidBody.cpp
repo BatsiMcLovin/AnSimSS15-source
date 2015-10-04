@@ -57,7 +57,6 @@ void RigidBody::iterate(float duration, float gravityFac){
 
 	mVelocity.y = mLinearMomentum.y / mMass;
 	mPosition.y = mPosition.y + mVelocity.y*duration;
-	cout<<"Position in Y is: "<< mPosition.y << endl;
 
 	mVelocity.z = mLinearMomentum.z / mMass;
 	mPosition.z = mPosition.z + mVelocity.z*duration;
@@ -191,9 +190,7 @@ void RigidBody::updateMomenta(float duration, float gravity){
 	glm::vec3 rotatedForce= getRotationMat() * mForce;
 	rotatedForce.y = rotatedForce.y + mMass * -gravity; //force of gravity
 	mLinearMomentum = mLinearMomentum + duration * rotatedForce;
-	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * getRotationMat() * mTorque;
-	std::cout<< "AngularMomentumX is: "<< mAngularMomentum.x << "|| AngularMomentumY is: "<<mAngularMomentum.y <<"|| AngularMomentumZ is: "<<mAngularMomentum.z<< endl;
 }
 
 //in model space
@@ -203,7 +200,6 @@ void RigidBody::calculateTorque(){
 	for(ForceActor* fA : mForces){
 		mTorque += glm::cross(fA->getPosition(), fA->getForce());
 	}
-		std::cout<< "TorqueX is: "<< mTorque.x << "|| TorqueY is: "<<mTorque.y <<"|| TorqueZ is: "<<mTorque.z<< endl;
 }
 
 //in model space
@@ -212,13 +208,20 @@ void RigidBody::calculateForce(){
 	for(ForceActor* fA : mForces){
 		mForce += fA->getForce();
 	}
-		mForce= getRotationMat()* mForce;
-		std::cout<< "ForceX is: "<< mForce.x << "|| ForceY is: "<<mForce.y <<"|| ForceZ is: "<<mForce.z<< endl;
-		mForce= glm::inverse(getRotationMat()) * mForce;
+		//mForce= getRotationMat()* mForce;
+		//mForce= glm::inverse(getRotationMat()) * mForce;
 }
 
 void RigidBody::addForce(ForceActor* force){
 	mForces.push_back(force);
+}
+
+void RigidBody::printInfo(){
+	std::cout<< "Position: x="<< mPosition.x << "|| y="<<mPosition.y <<"|| z="<<mPosition.z<<endl;
+	std::cout<< "Force: x="<< mForce.x << "|| y="<<mForce.y <<"|| z="<<mForce.z<< endl;
+	std::cout<< "Torque: x="<< mTorque.x << "|| y="<<mTorque.y <<"|| z="<<mTorque.z<< endl;
+	std::cout<< "LinearMomentum: x="<< mLinearMomentum.x << "|| y="<<mLinearMomentum.y <<"|| z="<<mLinearMomentum.z<< endl;
+	std::cout<< "AngularMomentum: x="<< mAngularMomentum.x << "|| y="<<mAngularMomentum.y <<"|| z="<<mAngularMomentum.z<< endl;
 }
 
 void RigidBody::reset(glm::vec3 newPosition, glm::quat rotQuat){

@@ -138,6 +138,12 @@ public:
 	 * @return void
 	 */
 	void calculateForce();
+	/** \brief prints information about Rigidbody
+	*
+	* prints some information about position, forces, momenta etc. onto the console.
+	* @return void
+	*/
+	void printInfo();
 
 
 	//getter + settter

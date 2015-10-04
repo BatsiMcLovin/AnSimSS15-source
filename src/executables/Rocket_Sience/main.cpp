@@ -113,17 +113,17 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		std::cout<<"gravity changed to "<<gravity<<std::endl;
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS){
-		gravity += 0.01;
-	}
-	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_RELEASE){
-		std::cout<<"gravity changed to "<<gravity<<std::endl;
+		gravity += 0.05;
 	}
 	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS){
-		gravity -= 0.01;
+		gravity -= 0.05;
 	}
-	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_RELEASE){
-		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
+		rocket.printInfo();
+		std::cout<<"gravity: "<<gravity<<"\n"<<std::endl;
+
 	}
+
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -170,6 +170,18 @@ void resizeCallback( GLFWwindow *window, int w, int h)
 	camera.setWidthHeight( w, h);
 	camera.getProjection()->updateRatio( w / (float) h);
 	glViewport(0, 0, w, h);
+}
+
+void printControls(){
+	std::cout<<"\nSteuerung"<<endl;
+	std::cout<<"---------\n"<<endl;
+	std::cout<<"W,S,A,D,Q,E: Rakete rotieren mittels Triebwerken"<<endl;
+	std::cout<<"Space: Hauptantrieb starten"<<endl;
+	std::cout<<"R: Rakete zurücksetzen"<<endl;
+	std::cout<<"0: Schwerkraft auf 0 setzen"<<endl;
+	std::cout<<"1: Schwerkraft auf 9.81 setzen"<<endl;
+	std::cout<<"+/-: Schwerkraft erhöhen/verringern"<<endl;
+	std::cout<<"I: Informationen auf Konsole ausgeben"<<endl;
 }
 
 int main() 
@@ -227,6 +239,8 @@ int main()
 	camera.setCenter(&rocketPos);
 	camera.setRadius(120.0f);
 	CVK::State::getInstance()->setCamera( &camera);
+
+	printControls();
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
