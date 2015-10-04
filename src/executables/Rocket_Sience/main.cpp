@@ -8,6 +8,8 @@
 #include "Engine/RigidBody.h"
 #include "Engine/Rocket.h"
 #include "Engine/ForceActor.h"
+#include "Engine/World.h"
+#include "designPatterns/Singleton.h"
 
 #include <sstream>
 
@@ -15,28 +17,42 @@
 const int width = 1080;
 const int height = 720;
 
+//define dimensions for rocket and skybox
+const float rocketScale = 7.5f;
+const float semiAxisX = 3.0f;
+const float semiAxisY = 1.0f;
+const float semiAxisZ = 1.0f;
+
+const float skyboxSize = 2000;
+
+//rocket can't go lower than this point
+float lowestY = -skyboxSize+semiAxisX*rocketScale;
+
+//for adjusting gravity
+float gravity = 9.81f;
+
+
 GLFWwindow* window;
 
 //define Camera (Trackball)
-CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 100.0f);
+CVK::Perspective projection(60.0f, width / (float) height, 0.1f, 10000.0f);
 CVK::Trackball camera( width, height, &projection);
+
 
 //*************************************************************************************************************
 // space ship
-CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 1.0);
-float spaceShipEngineForce 	= 10.0f;
-float spaceShipRotAngle		= 0.0f;  // angle in degree
-Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
+CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 272800.0*rocketScale);
+Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), rocketScale*glm::vec3(3.0, 1.0, 1.0));
 
 //*************************************************************************************************************
 
 //initialize engines
-ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -1.0f));
-ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, 1.0f));
-ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
-ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
-ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 1.0f, 0.0f));
-ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -1.0f, 0.0f));
+ForceActor engine1(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, -rocketScale));
+ForceActor engine2(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.f, rocketScale));
+ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f));
+ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
+ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f));
+ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
 ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, 0.0f, 0.0f));
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -44,50 +60,70 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
      if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		engine1.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
 			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		engine2.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine2.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
 			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-		engine3.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine3.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
 			engine3.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-		engine4.setForce(glm::vec3(1.0f, 0.0f, 0.0f));
+		engine4.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
 			engine4.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
-		engine5.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+		engine5.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE){
 			engine5.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
-		engine6.setForce(glm::vec3(0.0f, 0.0f, 0.5f));
+		engine6.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
 			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
-		engine7.setForce(glm::vec3(5.0f, 0.0f, 0.0f));
+		engine7.setForce(glm::vec3(30160000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
-		rocket.reset(glm::vec3(0,0,0));
+		rocket.reset(glm::vec3(0,lowestY,0), glm::quat(rocket.getStartingDirection()));
 	}
+	if (glfwGetKey(window, GLFW_KEY_0) == GLFW_PRESS){
+		gravity = 0.0f;
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS){
+		gravity = 9.81f;
+		std::cout<<"gravity changed to "<<gravity<<std::endl;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS){
+		gravity += 0.05;
+	}
+	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS){
+		gravity -= 0.05;
+	}
+	if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS){
+		rocket.printInfo();
+		std::cout<<"gravity: "<<gravity<<"\n"<<std::endl;
+
+	}
+
 }
 
 double calculateFPS(double interval = 1.0 , std::string title = "NONE"){
@@ -136,6 +172,18 @@ void resizeCallback( GLFWwindow *window, int w, int h)
 	glViewport(0, 0, w, h);
 }
 
+void printControls(){
+	std::cout<<"\nSteuerung"<<endl;
+	std::cout<<"---------\n"<<endl;
+	std::cout<<"W,S,A,D,Q,E: Rakete rotieren mittels Triebwerken"<<endl;
+	std::cout<<"Space: Hauptantrieb starten"<<endl;
+	std::cout<<"R: Rakete zurücksetzen"<<endl;
+	std::cout<<"0: Schwerkraft auf 0 setzen"<<endl;
+	std::cout<<"1: Schwerkraft auf 9.81 setzen"<<endl;
+	std::cout<<"+/-: Schwerkraft erhöhen/verringern"<<endl;
+	std::cout<<"I: Informationen auf Konsole ausgeben"<<endl;
+}
+
 int main() 
 {
 	// Init GLFW and GLEW
@@ -148,6 +196,8 @@ int main()
 	glfwSetKeyCallback(window, keyCallback);
 	glewInit();
 
+	//set gravity; World Singleton does not work yet
+	//World::getInstance()->setGravity(9.81);
 	CVK::State::getInstance()->setBackgroundColor( white);
 	glm::vec3 BgCol = CVK::State::getInstance()->getBackgroundColor();
 	glClearColor( BgCol.r, BgCol.g, BgCol.b, 0.0);
@@ -169,7 +219,7 @@ int main()
 	CVK::State::getInstance()->updateSceneSettings(darkgrey, 0, white, 1, 10, 1);
 
 	// Create skybox
-    Skybox* skybox = new Skybox(30.0f);
+    Skybox* skybox = new Skybox(skyboxSize);
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
@@ -187,8 +237,10 @@ int main()
 	//Camera
 	glm:: vec3 rocketPos(rocket.getPosition());
 	camera.setCenter(&rocketPos);
-	camera.setRadius(6.0f);
+	camera.setRadius(120.0f);
 	CVK::State::getInstance()->setCamera( &camera);
+
+	printControls();
 
 	float deltaTime = 0.0f;
 	float oldTime = glfwGetTime();
@@ -201,46 +253,41 @@ int main()
 		oldTime = currentTime;
 		calculateFPS(1.0, "OpenGL Window");
 
+		rocket.iterate(deltaTime, gravity);
+		rocketPos = rocket.getPosition();
+
+		//set modelMatrix
+		glm::mat3 rotationMatrix = rocket.getRotationMat();
+		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
+								glm::vec4(rotationMatrix[1],0.0f),
+								glm::vec4(rotationMatrix[2], 0.0f),
+								glm::vec4(0.f,0.f,0.f,1.f));
+		modelmatrix = glm::translate(glm::mat4(1.0f), rocketPos) * modelmatrix;
+		modelmatrix = glm::scale(modelmatrix, glm::vec3(rocketScale, rocketScale, rocketScale));
+		spaceship.setModelMatrix(modelmatrix);
+
+		if(rocketPos.y <= lowestY){
+			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
+		}
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		//update camera position and render
+		camera.setCenter(&rocketPos);
 		//Update Camera
 		camera.update(window);
 
 		//Use the skybox shader program
-        CVK::State::getInstance()->setShader(&skyboxShader);
-        CVK::State::getInstance()->getShader()->update();
-        skybox->render();
+		CVK::State::getInstance()->setShader(&skyboxShader);
+		CVK::State::getInstance()->getShader()->update();
+		skybox->render();
 
 		//Use phong shader to render the scene
 		CVK::State::getInstance()->setShader(&spaceShader);
 		CVK::State::getInstance()->setLight(0, &light);
 		spaceShader.update();
 
-		//Update physics
-		//spaceShipMassPoint.numericIntegration(deltaTime);
-		rocket.iterate(deltaTime);
-
-		//set modelMatrix
-
-		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
-		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
-		glm::mat3 rotationMatrix = rocket.getRotationMat();
-		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
-								glm::vec4(rotationMatrix[1],0.0f),
-								glm::vec4(rotationMatrix[2], 0.0f),
-								glm::vec4(0.f,0.f,0.f,1.f));
-		modelmatrix = glm::translate(glm::mat4(1.0f), rocket.getPosition()) * modelmatrix;
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(1,1,1));
-		spaceship.setModelMatrix(modelmatrix);
-
-		//update camera position and render
-		rocketPos = rocket.getPosition();
-		camera.setCenter(&rocketPos);
 		spaceship.render();
-		
-		t += deltaTime * 0.01f; //speed = 0.01
-		if(t >= 1.0)
-			t = 0.0f;
 
 		glfwSwapBuffers( window);
 		glfwPollEvents();

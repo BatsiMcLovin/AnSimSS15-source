@@ -39,6 +39,7 @@ protected:
 	glm::mat3 mInertiaTensor;				/**< body inertia tensor */
 	glm::vec3 mInitInverseInertTensDiagon;		/**< initial inverse inertia tensor diagonal */
 	glm::mat3 mInverseInertiaTensor;			/**< inverse inertia tensor */
+	glm::vec3 mStartingDirection;			/**< direction in which the rocket will start */
 
 	glm::vec3 mAngularVelocity;				/**< angular velocity */
 	glm::vec3 mAngularMomentum;				/**< angular momentum */
@@ -81,7 +82,7 @@ public:
 	 * @param duration time length of a simulation step
 	 * @return void
 	 */
-	void iterate(float duration);
+	void iterate(float duration, float gravity);
 
 	/** \brief update rotations matrix
 	 *
@@ -103,7 +104,7 @@ public:
 	 * @param duration time length of a simulation step
 	 * @return void
 	 */
-	void updateMomenta(float duration);
+	void updateMomenta(float duration, float gravity);
 
 	/** \brief calculates torque
 	 *
@@ -121,7 +122,7 @@ public:
 	void addForce(ForceActor* force);
 
 	//
-	void reset(glm::vec3 newPosition);
+	void reset(glm::vec3 newPosition, glm::quat rotQuat);
 
 
 	/** \brief calculate forces
@@ -137,6 +138,12 @@ public:
 	 * @return void
 	 */
 	void calculateForce();
+	/** \brief prints information about Rigidbody
+	*
+	* prints some information about position, forces, momenta etc. onto the console.
+	* @return void
+	*/
+	void printInfo();
 
 
 	//getter + settter
@@ -168,6 +175,13 @@ public:
 		this->mInertiaTensor = inertia;
 	}
 
+	const glm::vec3& getStartingDirection() const {
+		return mStartingDirection;
+	}
+
+	void setStartingDirection(const glm::vec3& startingDirection) {
+		mStartingDirection = startingDirection;
+	}
 };
 
 
