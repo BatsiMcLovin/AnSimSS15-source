@@ -26,7 +26,7 @@ CVK::Trackball camera( width, height, &projection);
 
 //*************************************************************************************************************
 // space ship
-CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 757000.0);
+CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 2046000.0);
 float spaceShipEngineForce 	= 10.0f;
 float spaceShipRotAngle		= 0.0f;  // angle in degree
 Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), glm::vec3(3.0, 1.0, 1.0));
@@ -83,7 +83,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
 		}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
-		engine7.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine7.setForce(glm::vec3(30160000.0f, 0.0f, 0.0f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));

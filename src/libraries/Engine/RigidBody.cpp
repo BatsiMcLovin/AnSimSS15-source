@@ -26,7 +26,7 @@ RigidBody::RigidBody(float massIN, glm::vec3 posIN){
 	mAngularMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
 	mLinearMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
 	mForce = glm::vec3 (0.0f, 0.0f, 0.0f);
-	mStartingDirection = glm::vec3(glm::radians(0.f), glm::radians(0.f), glm::radians(-90.f));
+	mStartingDirection = glm::vec3(glm::radians(0.f), glm::radians(0.f), glm::radians(90.f));
 	mRotationQuat=glm::quat(mStartingDirection);
 
 	//isStatic = staticIN;
@@ -186,10 +186,11 @@ void RigidBody::updateMomenta(float duration){
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 
 	if(glm::length(mForce)!=0){
-		glm::vec3 rotatedForce = getRotationMat() * mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
-		rotatedForce.y = rotatedForce.y + mMass * - 0.0981; //force of gravity
-	mLinearMomentum = mLinearMomentum + duration * rotatedForce;
+		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
 	}
+	glm::vec3 rotatedForce= getRotationMat() * mForce;
+	rotatedForce.y = rotatedForce.y + mMass * - 9.81; //force of gravity
+	mLinearMomentum = mLinearMomentum + duration * rotatedForce;
 	std::cout<< "LinearMomentumX is: "<< mLinearMomentum.x << "|| LinearMomentumY is: "<<mLinearMomentum.y <<"|| LinearMomentumZ is: "<<mLinearMomentum.z<< endl;
 	mAngularMomentum = mAngularMomentum + duration * getRotationMat() * mTorque;
 	std::cout<< "AngularMomentumX is: "<< mAngularMomentum.x << "|| AngularMomentumY is: "<<mAngularMomentum.y <<"|| AngularMomentumZ is: "<<mAngularMomentum.z<< endl;
