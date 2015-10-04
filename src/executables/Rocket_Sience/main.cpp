@@ -253,8 +253,27 @@ int main()
 		oldTime = currentTime;
 		calculateFPS(1.0, "OpenGL Window");
 
+		rocket.iterate(deltaTime, gravity);
+		rocketPos = rocket.getPosition();
+
+		//set modelMatrix
+		glm::mat3 rotationMatrix = rocket.getRotationMat();
+		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
+								glm::vec4(rotationMatrix[1],0.0f),
+								glm::vec4(rotationMatrix[2], 0.0f),
+								glm::vec4(0.f,0.f,0.f,1.f));
+		modelmatrix = glm::translate(glm::mat4(1.0f), rocketPos) * modelmatrix;
+		modelmatrix = glm::scale(modelmatrix, glm::vec3(rocketScale, rocketScale, rocketScale));
+		spaceship.setModelMatrix(modelmatrix);
+
+		if(rocketPos.y <= lowestY){
+			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
+		}
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+		//update camera position and render
+		camera.setCenter(&rocketPos);
 		//Update Camera
 		camera.update(window);
 
@@ -268,29 +287,6 @@ int main()
 		CVK::State::getInstance()->setLight(0, &light);
 		spaceShader.update();
 
-		//Update physics
-		//spaceShipMassPoint.numericIntegration(deltaTime);
-		rocket.iterate(deltaTime, gravity);
-
-		//set modelMatrix
-
-		//TODO:hier stimmt was nicht mit der Rotation; Modell dreht sich, während Kamera immer geradeaus geht
-		//glm::mat4 modelmatrix = glm::rotate(glm::mat4(1.0f), spaceShipRotAngle, glm::vec3(0.0f,1.0f,0.0f));
-		glm::mat3 rotationMatrix = rocket.getRotationMat();
-		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
-								glm::vec4(rotationMatrix[1],0.0f),
-								glm::vec4(rotationMatrix[2], 0.0f),
-								glm::vec4(0.f,0.f,0.f,1.f));
-		modelmatrix = glm::translate(glm::mat4(1.0f), rocket.getPosition()) * modelmatrix;
-		modelmatrix = glm::scale(modelmatrix, glm::vec3(rocketScale, rocketScale, rocketScale));
-		spaceship.setModelMatrix(modelmatrix);
-
-		//update camera position and render
-		rocketPos = rocket.getPosition();
-		if(rocketPos.y <= lowestY){
-			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
-		}
-		camera.setCenter(&rocketPos);
 		spaceship.render();
 
 		glfwSwapBuffers( window);
