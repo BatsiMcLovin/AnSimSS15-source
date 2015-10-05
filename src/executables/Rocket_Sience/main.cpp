@@ -53,7 +53,19 @@ ForceActor engine3(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f)
 ForceActor engine4(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
 ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f));
 ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
-ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(-3.0*rocketScale, 0.0f, 0.0f));
+ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(-2.8*rocketScale, 0.0f, 0.0f));
+
+//CVK::Material engineActive(glm::vec3(1.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 1);
+CVK::Material engineActive(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100);
+
+CVK::Node engineNode1;
+CVK::Node engineNode2;
+CVK::Node engineNode3;
+CVK::Node engineNode4;
+CVK::Node engineNode5;
+CVK::Node engineNode6;
+CVK::Node engineNode7;
+
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -61,6 +73,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
 		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engineNode1.setMaterial(&engineActive);
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
 			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -239,6 +252,8 @@ int main()
 	spaceship.addChild(&engineNode6);
 	spaceship.addChild(&engineNode7);
 
+	//CVK::Material engineActive(RESOURCES_PATH "/engineActive.mtl", 1.0);
+
 	//Create Rocket and initialize engines as ForceActor
 	rocket.addForce(&engine1);
 	rocket.addForce(&engine2);
@@ -286,7 +301,7 @@ int main()
 		engineNode4.setModelMatrix(glm::translate(glm::mat4(1.0f), engine4.getPosition()/rocketScale));
 		engineNode5.setModelMatrix(glm::translate(glm::mat4(1.0f), engine5.getPosition()/rocketScale));
 		engineNode6.setModelMatrix(glm::translate(glm::mat4(1.0f), engine6.getPosition()/rocketScale));
-		engineNode7.setModelMatrix(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale));
+		engineNode7.setModelMatrix(glm::scale(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale), glm::vec3(2, 2, 2)));
 
 		if(rocketPos.y <= lowestY){
 			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
