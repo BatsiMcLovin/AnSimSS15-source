@@ -8,11 +8,14 @@
 #include <CVK_AnSim/CVK_AS_LineStrip.h>
 #include <time.h>
 #include <glm/gtc/random.hpp>
+#include <math.h>
 
 #define WIDTH 800
 #define HEIGHT 800
 
 #define PARTICLE_COUNT 200
+
+#define PARTICLE_GROUP_COUNT 10
 
 GLFWwindow* window;
 
@@ -24,7 +27,7 @@ CVK::Trackball cam_trackball( WIDTH, HEIGHT, &projection);
 CVK::HermiteSpline *mPath;
 CVK::LineStrip* line;
 
-
+float aspect_ratio = (16.0/9.0);
 
 void resizeCallback( GLFWwindow *window, int w, int h)
 {
@@ -114,6 +117,19 @@ int main()
 	GLuint* buffers;
 	GLuint position_buffer;
 	GLuint velocity_buffer;
+	GLuint compShader;
+	GLuint compute_prog;
+	GLuint render_prog;
+	GLuint velocity_tbo;
+	GLuint position_tbo;
+
+	compShader=glCreateShader(GL_COMPUTE_SHADER);
+	const char* compPath = SHADERS_PATH "/Particles.comp";
+	glShaderSource(compShader, 1, &compPath, 0);
+	glCompileShader(compShader);
+	compute_prog=glCreateProgram();
+	glAttachShader(compute_prog, compShader);
+	glLinkProgram(compute_prog);
 
 	glGenBuffers(2, buffers);
 	glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
@@ -143,11 +159,66 @@ int main()
 	}
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 
+	glm::vec4 * attractor_masses;
+	float delta_time =0.0f;
+	float oldTime = glfwGetTime();
+	GLint dt_location = glGetUniformLocation(compute_prog, "dt");
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	while( !glfwWindowShouldClose( window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		float currentTime = glfwGetTime();
+		delta_time = currentTime - oldTime;
+		oldTime = currentTime;
 		
+		// Update the buffer containing the attractor positions and masses
+		glm::vec4 * attractors =
+		(glm::vec4 *)glMapBufferRange(GL_UNIFORM_BUFFER,
+		0,
+		32 * sizeof(glm::vec4),
+		GL_MAP_WRITE_BIT |
+		GL_MAP_INVALIDATE_BUFFER_BIT);
+		int i;
+		for (i = 0; i < 32; i++)
+		{
+		attractors[i] =
+		glm::vec4(sin(currentTime * (i + 4) * 7.5 * 20.0) * 50.0f,
+		cos(currentTime * (float)(i + 7) * 3.9f * 20.0f) * 50.0f,
+		sin(currentTime * (float)(i + 3) * 5.3f * 20.0f) *
+		cos(currentTime * (float)(i + 5) * 9.1f) * 100.0f,
+		attractor_masses[i]);
+		}
+		glUnmapBuffer(GL_UNIFORM_BUFFER);
+		// Activate the compute program and bind the position
+		// and velocity buffers
+		glUseProgram(compute_prog);
+		glBindImageTexture(0, velocity_tbo, 0,
+		GL_FALSE, 0,
+		GL_READ_WRITE, GL_RGBA32F);
+		glBindImageTexture(1, position_tbo, 0,
+		GL_FALSE, 0,
+		GL_READ_WRITE, GL_RGBA32F);
+		// Set delta time
+		glUniform1f(dt_location, delta_time);
+		// Dispatch the compute shader
+		glDispatchCompute(PARTICLE_GROUP_COUNT, 1, 1);
+		// Ensure that writes by the compute shader have completed
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		// Set up our mvp matrix for viewing
+		glm::mat4 mvp = glm::perspective(45.0f, aspect_ratio,
+		0.1f, 1000.0f) *glm::translate(mat4(1.0f), glm::vec3(0.0f, 0.0f, -60.0f)) *
+		glm::rotate(currentTime * 1000.0f,
+		glm::vec3(0.0f, 1.0f, 0.0f));
+		// Clear, select the rendering program and draw a full screen quad
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glUseProgram(render_prog);
+		glUniformMatrix4fv(0, 1, GL_FALSE, mvp);
+		glBindVertexArray(render_vao);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
+
 		//Update Camera
 		cam_trackball.update( window);
 
