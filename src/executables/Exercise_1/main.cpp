@@ -6,6 +6,8 @@
 #include <CVK_AnSim/CVK_AS_CoordinateSystem.h>
 #include <CVK_AnSim/CVK_AS_HermiteSpline.h>
 #include <CVK_AnSim/CVK_AS_LineStrip.h>
+#include <time.h>
+#include <glm/gtc/random.hpp>
 
 #define WIDTH 800
 #define HEIGHT 800
@@ -66,6 +68,16 @@ void drawHermiteSpline(CVK::ShaderLineRender *shader)
 	line->render(shader);
 }
 
+float randomFloat(float min, float max)
+{
+    float r = (float)rand() / (float)RAND_MAX;
+    return min + r * (max - min);
+}
+
+glm::vec3 random_vector(float min, float max){
+	return glm::vec3(randomFloat(min, max),randomFloat(min, max), randomFloat(min, max));
+}
+
 int main() 
 {
 	// Init GLFW and GLEW
@@ -96,6 +108,42 @@ int main()
 
 	CVK::CoordinateSystem coords = CVK::CoordinateSystem(glm::vec3(0.0f));
 	
+	//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+	// Generate two buffers, bind them and initialize their data stores
+	GLuint* buffers;
+	GLuint position_buffer;
+	GLuint velocity_buffer;
+
+	glGenBuffers(2, buffers);
+	glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
+	glBufferData(GL_ARRAY_BUFFER, PARTICLE_COUNT * sizeof(glm::vec4), NULL, GL_DYNAMIC_COPY);
+	// Map the position buffer and fill it with random vectors
+	glm::vec4 * positions = (glm::vec4 *)glMapBufferRange(GL_ARRAY_BUFFER, 0, PARTICLE_COUNT * sizeof(glm::vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
+	for (int i = 0; i < PARTICLE_COUNT; i++){
+		positions[i] = glm::vec4(random_vector(-10.0, 10.0), rand());
+		}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+	// Initialization of the velocity buffer - also filled with random vectors
+	glBindBuffer(GL_ARRAY_BUFFER, velocity_buffer);
+	glBufferData(GL_ARRAY_BUFFER,
+			PARTICLE_COUNT * sizeof(glm::vec4),
+			NULL,
+			GL_DYNAMIC_COPY);
+	glm::vec4 * velocities = (glm::vec4*)
+		glMapBufferRange(GL_ARRAY_BUFFER,
+				0,
+				PARTICLE_COUNT * sizeof(glm::vec4),
+				GL_MAP_WRITE_BIT |
+				GL_MAP_INVALIDATE_BUFFER_BIT);
+	for (int i = 0; i < PARTICLE_COUNT; i++)
+	{
+		velocities[i] = glm::vec4(random_vector(-0.1f, 0.1f), 0.0f);
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 	while( !glfwWindowShouldClose( window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -114,40 +162,5 @@ int main()
 	glfwDestroyWindow( window);
 	glfwTerminate();
 	return 0;
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-// Generate two buffers, bind them and initialize their data stores
-	GLuint* buffers;
-	GLuint position_buffer;
-
-glGenBuffers(2, buffers);
-glBindBuffer(GL_ARRAY_BUFFER, position_buffer);
-glBufferData(GL_ARRAY_BUFFER, PARTICLE_COUNT * sizeof(glm::vec4), NULL, GL_DYNAMIC_COPY);
-// Map the position buffer and fill it with random vectors
-glm::vec4 * positions = (glm::vec4 *)glMapBufferRange(GL_ARRAY_BUFFER, 0, PARTICLE_COUNT * sizeof(glm::vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_BUFFER_BIT);
-for (int i = 0; i < PARTICLE_COUNT; i++){
-	positions[i] = glm::vec4(random_vector(-10.0f, 10.0f), std::srand(time(Null))random_float());
-	}
-glUnmapBuffer(GL_ARRAY_BUFFER);
-
-// Initialization of the velocity buffer - also filled with random vectors
-glBindBuffer(GL_ARRAY_BUFFER, velocity_buffer);
-glBufferData(GL_ARRAY_BUFFER,
-PARTICLE_COUNT * sizeof(vmath::vec4),
-NULL,
-GL_DYNAMIC_COPY);
-vmath::vec4 * velocities = (vmath::vec4 *)
-glMapBufferRange(GL_ARRAY_BUFFER,
-0,
-PARTICLE_COUNT * sizeof(vmath::vec4),
-GL_MAP_WRITE_BIT |
-GL_MAP_INVALIDATE_BUFFER_BIT);
-for (i = 0; i < PARTICLE_COUNT; i++)
-{
-velocities[i] = vmath::vec4(random_vector(-0.1f, 0.1f), 0.0f);
-}
-glUnmapBuffer(GL_ARRAY_BUFFER);
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }
 
