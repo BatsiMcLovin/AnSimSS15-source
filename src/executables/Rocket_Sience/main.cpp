@@ -25,6 +25,14 @@ const float semiAxisZ = 1.0f;
 
 const float skyboxSize = 2000;
 
+bool engine1Active=false;
+bool engine2Active=false;
+bool engine3Active=false;
+bool engine4Active=false;
+bool engine5Active=false;
+bool engine6Active=false;
+bool engine7Active=false;
+
 //rocket can't go lower than this point
 float lowestY = -skyboxSize+semiAxisX*rocketScale;
 
@@ -55,8 +63,9 @@ ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f)
 ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
 ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(-2.8*rocketScale, 0.0f, 0.0f));
 
-//CVK::Material engineActive(glm::vec3(1.0, 0.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 1);
-CVK::Material engineActive(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100);
+//set material colors
+CVK::Material engineMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
+CVK::Material engineActiveMat(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100);
 
 CVK::Node engineNode1;
 CVK::Node engineNode2;
@@ -73,46 +82,61 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
 		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
-		engineNode1.setMaterial(&engineActive);
+		engine1Active=true;
+
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
 			engine1.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine1Active=false;
 		}
+
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
 		engine2.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine2Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
 			engine2.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine2Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
 		engine3.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine3Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
 			engine3.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine3Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
 		engine4.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine4Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
 			engine4.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine4Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS){
 		engine5.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
+		engine5Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_RELEASE){
 			engine5.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine5Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS){
 		engine6.setForce(glm::vec3(0.0f, 0.0f, 1760000.0f));
+		engine6Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_RELEASE){
 			engine6.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine6Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
 		engine7.setForce(glm::vec3(30160000.0f, 0.0f, 0.0f));
+		engine7Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE){
 			engine7.setForce(glm::vec3(0.0f, 0.0f, 0.0f));
+			engine7Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS){
 		rocket.reset(glm::vec3(0,lowestY,0), glm::quat(rocket.getStartingDirection()));
@@ -236,6 +260,8 @@ int main()
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
+	CVK::Material spaceshipMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
+	spaceship.setMaterial(&spaceshipMat);
 	//Init nodes for engines and add them to spaceship
 	CVK::Node engineNode1("Engine1", RESOURCES_PATH "/engine.obj");
 	CVK::Node engineNode2("Engine2", RESOURCES_PATH "/engine.obj");
@@ -251,6 +277,7 @@ int main()
 	spaceship.addChild(&engineNode5);
 	spaceship.addChild(&engineNode6);
 	spaceship.addChild(&engineNode7);
+	engineNode1.setMaterial(&engineMat);
 
 	//CVK::Material engineActive(RESOURCES_PATH "/engineActive.mtl", 1.0);
 
@@ -322,6 +349,14 @@ int main()
 		//Use phong shader to render the scene
 		CVK::State::getInstance()->setShader(&spaceShader);
 		CVK::State::getInstance()->setLight(0, &light);
+
+
+		//Problem liegt im CVK: eine Zeile(122) einkommentiert -> nichts ändert sich, auskommentiert-->alle engines ändern sich
+		glm::vec3 engine1Color = engine1Active ? glm::vec3(1.0, 0.0, 0.0) : glm::vec3(1.0f);
+		engineNode1.getMaterial()->setdiffColor(engine1Color);
+		std::cout<<"matColor.x is"<<engineNode1.getMaterial()->getdiffColor()->x<<std::endl;
+		//CVK::Material currentMat1 = engine1Active ? engineActiveMat : engineMat;
+		//engineNode1.setMaterial(&currentMat1);
 		spaceShader.update();
 
 		spaceship.render();

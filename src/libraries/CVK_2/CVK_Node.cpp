@@ -119,7 +119,7 @@ void CVK::Node::load(std::string path)
 		// new child node with the geometry and a connection to material
 		CVK::Node* child = new CVK::Node();
 		child->setGeometry(geometry);
-		child->setMaterial(materials[mesh->mMaterialIndex]);
+//		//child->setMaterial(materials[mesh->mMaterialIndex]);
 		addChild(child);
 	}
 }
