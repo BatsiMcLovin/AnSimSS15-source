@@ -70,6 +70,7 @@ CVK::Material engineActiveMat(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100)
 glm::vec3 redCol(1.0f, 0.0f, 0.0f);
 glm::vec3 whiteCol(1.0f, 1.0f, 1.0f);
 
+CVK::Node spaceship;
 CVK::Node engineNode1;
 CVK::Node engineNode2;
 CVK::Node engineNode3;
@@ -77,6 +78,13 @@ CVK::Node engineNode4;
 CVK::Node engineNode5;
 CVK::Node engineNode6;
 CVK::Node engineNode7;
+CVK::Node engineActiveNode1;
+CVK::Node engineActiveNode2;
+CVK::Node engineActiveNode3;
+CVK::Node engineActiveNode4;
+CVK::Node engineActiveNode5;
+CVK::Node engineActiveNode6;
+CVK::Node engineActiveNode7;
 
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -86,6 +94,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
 		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
 		engine1Active=true;
+
 
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE){
@@ -264,7 +273,7 @@ int main()
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
 	CVK::Material spaceshipMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
-	spaceship.setMaterial(&spaceshipMat);
+	//spaceship.setMaterial(&spaceshipMat);
 	//Init nodes for engines and add them to spaceship
 	CVK::Node engineNode1("Engine1", RESOURCES_PATH "/engine.obj");
 	CVK::Node engineNode2("Engine2", RESOURCES_PATH "/engine.obj");
@@ -273,6 +282,13 @@ int main()
 	CVK::Node engineNode5("Engine5", RESOURCES_PATH "/engine.obj");
 	CVK::Node engineNode6("Engine6", RESOURCES_PATH "/engine.obj");
 	CVK::Node engineNode7("Engine7", RESOURCES_PATH "/engine.obj");
+	CVK::Node engineActiveNode1("EngineActive1", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode2("EngineActive2", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode3("EngineActive3", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode4("EngineActive4", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode5("EngineActive5", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode6("EngineActive6", RESOURCES_PATH "/redEngine.obj");
+	CVK::Node engineActiveNode7("EngineActive7", RESOURCES_PATH "/redEngine.obj");
 	spaceship.addChild(&engineNode1);
 	spaceship.addChild(&engineNode2);
 	spaceship.addChild(&engineNode3);
@@ -280,6 +296,13 @@ int main()
 	spaceship.addChild(&engineNode5);
 	spaceship.addChild(&engineNode6);
 	spaceship.addChild(&engineNode7);
+//	spaceship.addChild(&engineActiveNode1);
+//	spaceship.addChild(&engineActiveNode2);
+//	spaceship.addChild(&engineActiveNode3);
+//	spaceship.addChild(&engineActiveNode4);
+//	spaceship.addChild(&engineActiveNode5);
+//	spaceship.addChild(&engineActiveNode6);
+//	spaceship.addChild(&engineActiveNode7);
 
 	//CVK::Material engineActive(RESOURCES_PATH "/engineActive.mtl", 1.0);
 
@@ -332,6 +355,15 @@ int main()
 		engineNode6.setModelMatrix(glm::translate(glm::mat4(1.0f), engine6.getPosition()/rocketScale));
 		engineNode7.setModelMatrix(glm::scale(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale), glm::vec3(2, 2, 2)));
 
+
+		engineActiveNode1.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine1.getPosition()/rocketScale));
+		engineActiveNode2.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine2.getPosition()/rocketScale));
+		engineActiveNode3.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine3.getPosition()/rocketScale));
+		engineActiveNode4.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine4.getPosition()/rocketScale));
+		engineActiveNode5.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine5.getPosition()/rocketScale));
+		engineActiveNode6.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine6.getPosition()/rocketScale));
+		engineActiveNode7.setModelMatrix(modelmatrix*glm::scale(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale), glm::vec3(2, 2, 2)));
+
 		if(rocketPos.y <= lowestY){
 			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
 		}
@@ -378,6 +410,14 @@ int main()
 		spaceShader.update();
 
 		spaceship.render();
+
+		if(engine1Active)engineActiveNode1.render();
+		if(engine2Active)engineActiveNode2.render();
+		if(engine3Active)engineActiveNode3.render();
+		if(engine4Active)engineActiveNode4.render();
+		if(engine5Active)engineActiveNode5.render();
+		if(engine6Active)engineActiveNode6.render();
+		if(engine7Active)engineActiveNode7.render();
 
 		glfwSwapBuffers( window);
 		glfwPollEvents();
