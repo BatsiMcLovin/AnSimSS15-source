@@ -46,7 +46,7 @@ RigidBody::~RigidBody(){
 
 void RigidBody::iterate(float duration, float gravityFac){
 	calculateForce();
-	calculateTorque();
+	//calculateTorque();
 	updateMomenta(duration, gravityFac);
 	updateRotMatrix();
 	updateInverseInertiaTensor();
@@ -184,9 +184,9 @@ void RigidBody::updateMomenta(float duration, float gravity){
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 
-	if(glm::length(mForce)!=0){
-		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
-	}
+//	if(glm::length(mForce)!=0){
+//		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
+//	}
 	glm::vec3 rotatedForce= getRotationMat() * mForce;
 	rotatedForce.y = rotatedForce.y + mMass * -gravity; //force of gravity
 	mLinearMomentum = mLinearMomentum + duration * rotatedForce;
@@ -205,8 +205,16 @@ void RigidBody::calculateTorque(){
 //in model space
 void RigidBody::calculateForce(){
 	mForce = glm::vec3(0,0,0);
+	mTorque = glm::vec3(0,0,0);
+	glm::vec3 currentForce;
+	glm::vec3 currentTorque;
 	for(ForceActor* fA : mForces){
-		mForce += fA->getForce();
+		currentForce = fA->getForce();
+		currentTorque = glm::cross(fA->getPosition(), fA->getForce());
+		mTorque += currentTorque;
+		if(glm::length(currentForce)!=0){
+			mForce += currentForce * ((glm::length(currentForce) - glm::length(currentTorque)) / glm::length(currentForce));
+		}
 	}
 		//mForce= getRotationMat()* mForce;
 		//mForce= glm::inverse(getRotationMat()) * mForce;

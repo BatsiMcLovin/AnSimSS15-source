@@ -67,6 +67,9 @@ ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(-2.8*rocketScale, 0.0f, 
 CVK::Material engineMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
 CVK::Material engineActiveMat(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100);
 
+glm::vec3 redCol(1.0f, 0.0f, 0.0f);
+glm::vec3 whiteCol(1.0f, 1.0f, 1.0f);
+
 CVK::Node engineNode1;
 CVK::Node engineNode2;
 CVK::Node engineNode3;
@@ -277,7 +280,6 @@ int main()
 	spaceship.addChild(&engineNode5);
 	spaceship.addChild(&engineNode6);
 	spaceship.addChild(&engineNode7);
-	engineNode1.setMaterial(&engineMat);
 
 	//CVK::Material engineActive(RESOURCES_PATH "/engineActive.mtl", 1.0);
 
@@ -352,9 +354,25 @@ int main()
 
 
 		//Problem liegt im CVK: eine Zeile(122) einkommentiert -> nichts ändert sich, auskommentiert-->alle engines ändern sich
-		glm::vec3 engine1Color = engine1Active ? glm::vec3(1.0, 0.0, 0.0) : glm::vec3(1.0f);
-		engineNode1.getMaterial()->setdiffColor(engine1Color);
-		std::cout<<"matColor.x is"<<engineNode1.getMaterial()->getdiffColor()->x<<std::endl;
+//		glm::vec3 engine1Color = engine1Active ? glm::vec3(1.0, 0.0, 0.0) : glm::vec3(1.0f);
+//		engineNode1.getMaterial()->setdiffColor(engine1Color);
+//		glm::vec3 engine2Color = engine2Active ? glm::vec3(1.0, 0.0, 0.0) : glm::vec3(1.0f);
+//		engineNode2.getMaterial()->setdiffColor(engine1Color);
+
+
+		//changes Material for all engines...
+//		if(engine1Active){
+//			engineNode1.getMaterial()->setdiffColor(redCol);
+//		}
+//		else engineNode1.getMaterial()->setdiffColor(whiteCol);
+
+		//crash
+//		if(engine2Active){
+//			engineNode2.getMaterial()->setdiffColor(redCol);
+//		}
+//		else engineNode2.getMaterial()->setdiffColor(whiteCol);
+
+
 		//CVK::Material currentMat1 = engine1Active ? engineActiveMat : engineMat;
 		//engineNode1.setMaterial(&currentMat1);
 		spaceShader.update();
