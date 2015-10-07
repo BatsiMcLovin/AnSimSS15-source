@@ -45,8 +45,8 @@ RigidBody::~RigidBody(){
 }
 
 void RigidBody::iterate(float duration, float gravityFac){
+	calculateTorque();
 	calculateForce();
-	//calculateTorque();
 	updateMomenta(duration, gravityFac);
 	updateRotMatrix();
 	updateInverseInertiaTensor();
@@ -184,6 +184,7 @@ void RigidBody::updateMomenta(float duration, float gravity){
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 
+	std::cout<<"mForce: "<<glm::length(mForce)<<", mTorque: "<<glm::length(mTorque)<<endl;
 //	if((glm::length(mForce) - glm::length(mTorque))>0){
 //		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
 //	}
@@ -205,17 +206,31 @@ void RigidBody::calculateTorque(){
 //in model space
 void RigidBody::calculateForce(){
 	mForce = glm::vec3(0,0,0);
-	mTorque = glm::vec3(0,0,0);
 	glm::vec3 currentForce;
 	glm::vec3 currentTorque;
 	for(ForceActor* fA : mForces){
 		currentForce = fA->getForce();
 		currentTorque = glm::cross(fA->getPosition(), fA->getForce());
-		mTorque += currentTorque;
-		mForce+=currentForce;
-		if((glm::length(currentForce) - glm::length(currentTorque))>0){
-			mForce += currentForce * ((glm::length(currentForce) - glm::length(currentTorque)) / glm::length(currentForce));
+		//mForce+=currentForce;
+//		if((glm::length(currentForce) > glm::length(currentTorque))&&glm::length(mTorque)!=0){
+//			currentForce = currentForce * ((glm::length(currentForce) - glm::length(currentTorque)) / glm::length(currentForce));
+//		}
+//		if((glm::length(currentForce) > glm::length(currentTorque)))
+//		mForce+=currentForce;
+
+		if((glm::length(currentForce) > glm::length(currentTorque))){
+			if(glm::length(mTorque)!=0){
+				currentForce = currentForce * ((glm::length(currentForce) - glm::length(currentTorque)) / glm::length(currentForce));
+				mForce+=currentForce;
+			}
+			else mForce+=currentForce;
 		}
+		else{
+			if(glm::length(mTorque)==0){
+				mForce+=currentForce;
+			}
+		}
+
 	}
 		//mForce= getRotationMat()* mForce;
 		//mForce= glm::inverse(getRotationMat()) * mForce;
