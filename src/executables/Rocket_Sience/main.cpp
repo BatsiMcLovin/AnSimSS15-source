@@ -88,7 +88,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
      if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {glfwDestroyWindow(window); exit(-1);};						//close the window
 
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-		engine1.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine1.setForce(glm::vec3(3*1760000.0f, 0.0f, 0.0f));
 		engine1Active=true;
 
 
@@ -99,7 +99,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 		}
 
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-		engine2.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine2.setForce(glm::vec3(3*1760000.0f, 0.0f, 0.0f));
 		engine2Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_RELEASE){
@@ -107,7 +107,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			engine2Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-		engine3.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine3.setForce(glm::vec3(3*1760000.0f, 0.0f, 0.0f));
 		engine3Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE){
@@ -115,7 +115,7 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 			engine3Active=false;
 		}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-		engine4.setForce(glm::vec3(1760000.0f, 0.0f, 0.0f));
+		engine4.setForce(glm::vec3(3*1760000.0f, 0.0f, 0.0f));
 		engine4Active=true;
 	}
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_RELEASE){
