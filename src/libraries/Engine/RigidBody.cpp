@@ -184,7 +184,7 @@ void RigidBody::updateMomenta(float duration, float gravity){
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 
-//	if(glm::length(mForce)!=0){
+//	if((glm::length(mForce) - glm::length(mTorque))>0){
 //		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
 //	}
 	glm::vec3 rotatedForce= getRotationMat() * mForce;
@@ -212,7 +212,8 @@ void RigidBody::calculateForce(){
 		currentForce = fA->getForce();
 		currentTorque = glm::cross(fA->getPosition(), fA->getForce());
 		mTorque += currentTorque;
-		if(glm::length(currentForce)!=0){
+		mForce+=currentForce;
+		if((glm::length(currentForce) - glm::length(currentTorque))>0){
 			mForce += currentForce * ((glm::length(currentForce) - glm::length(currentTorque)) / glm::length(currentForce));
 		}
 	}
