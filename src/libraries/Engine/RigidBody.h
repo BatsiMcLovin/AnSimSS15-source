@@ -29,26 +29,23 @@ class RigidBody {
 protected:
 
 	float mMass;							/**< body mass */
-	float mInverseMass;					/**< body inverse mass */	//ka ob nötig
+	float mInverseMass;						/**< body inverse mass */
 
 	glm::vec3 mPosition;					/**< body position */
 	glm::vec3 mVelocity;					/**< body velocity */
-	//glm::vec3 lastFrameVeloc;				/**< body last frame velocity */	//ka ob nötig
 	glm::quat mRotationQuat;					/**< body rotation quaternion */
 	glm::mat3 mRotationMat;					/**< body rotation matrix */
 	glm::mat3 mInertiaTensor;				/**< body inertia tensor */
 	glm::vec3 mInitInverseInertTensDiagon;		/**< initial inverse inertia tensor diagonal */
 	glm::mat3 mInverseInertiaTensor;			/**< inverse inertia tensor */
-	glm::vec3 mStartingDirection;			/**< direction in which the rocket will start */
+	glm::vec3 mStartingDirection;				/**< direction in which the rocket will start */
 
 	glm::vec3 mAngularVelocity;				/**< angular velocity */
 	glm::vec3 mAngularMomentum;				/**< angular momentum */
 	glm::vec3 mLinearMomentum;				/**< linear momentum */
 	glm::vec3 mTorque;						/**< Torque */
-	float mTerminalMom;						/**< terminal momentum */	//?
 
 	glm::vec3 mForce;						/**< body force */
-	bool mIsStatic;						/**< true if object is static, false if object is dynamic */
 	glm::mat4 mTransformMatrix;				/**< transformation matrix */
 
 	std::vector<ForceActor*> mForces;
@@ -80,6 +77,7 @@ public:
 	 *
 	 * perform linear and angular step to update velocity, position and rotation
 	 * @param duration time length of a simulation step
+	 * @param gravity gravity in world
 	 * @return void
 	 */
 	void iterate(float duration, float gravity);
@@ -102,6 +100,7 @@ public:
 	 *
 	 * apply gravity and update linear and angular momenta
 	 * @param duration time length of a simulation step
+	 * @param gravity gravity in world
 	 * @return void
 	 */
 	void updateMomenta(float duration, float gravity);
@@ -121,16 +120,13 @@ public:
 	 */
 	void addForce(ForceActor* force);
 
-	//
-	void reset(glm::vec3 newPosition, glm::quat rotQuat);
-
-
-	/** \brief calculate forces
+	/** \brief resets the rigid body
 	 *
-	 * calculate forces with colliding neighbor particles and grid boundries
-	 * @return current calculated force
+	 * @param newPosition	the place where to set the rigid body
+	 * @param rotQuat	how the rigid body should be rotated in the world
+	 * @return void
 	 */
-	glm::vec3 calculateForces(bool wgIN);
+	void reset(glm::vec3 newPosition, glm::quat rotQuat);
 
 	/** \brief calculate mForce
 	 *
@@ -138,6 +134,7 @@ public:
 	 * @return void
 	 */
 	void calculateForce();
+
 	/** \brief prints information about Rigidbody
 	*
 	* prints some information about position, forces, momenta etc. onto the console.

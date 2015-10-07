@@ -20,11 +20,7 @@
 		mLinearMomentum = glm::vec3 (0.0f, 0.0f, 0.0f);
 		mForce = glm::vec3 (0.0f, 0.0f, 0.0f);
 
-		//isStatic = staticIN;
-
-		// inertiatensor diagonale berechnen
-		//initInverseInertTensDiagon.x = initInverseInertTensDiagon.y = initInverseInertTensDiagon.z = 6.0f / (mass * 4 * sizeIN*sizeIN);
-
+		//calculate inertia tensor for the rocket as ellipsoid
 		this->mInertiaTensor = glm::mat3(glm::vec3((mMass/5)*(mDimensions.y*mDimensions.y + mDimensions.z*mDimensions.z), 0, 0),
 								glm::vec3(0, (mMass/5)*(mDimensions.x*mDimensions.x + mDimensions.z*mDimensions.z), 0),
 								glm::vec3(0, 0, (mMass/5)*(mDimensions.x*mDimensions.x + mDimensions.y*mDimensions.y)));

@@ -10,7 +10,7 @@
 #include "Engine/ForceActor.h"
 #include "Engine/World.h"
 #include "designPatterns/Singleton.h"
-
+#include "glm/gtx/transform.hpp"
 #include <sstream>
 
 
@@ -23,6 +23,8 @@ const float semiAxisX = 3.0f;
 const float semiAxisY = 1.0f;
 const float semiAxisZ = 1.0f;
 
+//skybox scaled to 4000 meters in diameter
+//red lines are 100 height meters each
 const float skyboxSize = 2000;
 
 bool engine1Active=false;
@@ -48,7 +50,7 @@ CVK::Trackball camera( width, height, &projection);
 
 
 //*************************************************************************************************************
-// space ship
+// space ship mass set to 272.8 tons
 CVK::MassPoint spaceShipMassPoint = CVK::MassPoint(glm::vec3(0.0f, 0.0f, 0.0f),  glm::vec3(0.0f, 0.0f, 0.0f), 272800.0*rocketScale);
 Rocket rocket(spaceShipMassPoint.getMass(), spaceShipMassPoint.getPosition(), rocketScale*glm::vec3(3.0, 1.0, 1.0));
 
@@ -63,13 +65,7 @@ ForceActor engine5(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, rocketScale, 0.0f)
 ForceActor engine6(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(0.0f, -rocketScale, 0.0f));
 ForceActor engine7(glm::vec3(0.0f, 0.f, 0.f), glm::vec3(-2.8*rocketScale, 0.0f, 0.0f));
 
-//set material colors
-CVK::Material engineMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
-CVK::Material engineActiveMat(glm::vec3(1.0f, 0.0f, 0.0f), glm::vec3(1.0f), 100);
-
-glm::vec3 redCol(1.0f, 0.0f, 0.0f);
-glm::vec3 whiteCol(1.0f, 1.0f, 1.0f);
-
+//initialize scene nodes for graphical representation
 CVK::Node spaceship;
 CVK::Node engineNode1;
 CVK::Node engineNode2;
@@ -245,8 +241,6 @@ int main()
 	glfwSetKeyCallback(window, keyCallback);
 	glewInit();
 
-	//set gravity; World Singleton does not work yet
-	//World::getInstance()->setGravity(9.81);
 	CVK::State::getInstance()->setBackgroundColor( white);
 	glm::vec3 BgCol = CVK::State::getInstance()->getBackgroundColor();
 	glClearColor( BgCol.r, BgCol.g, BgCol.b, 0.0);
@@ -272,8 +266,7 @@ int main()
 
 	//Init scene nodes and mass points
 	CVK::Node spaceship("Spaceship", RESOURCES_PATH "/sphere.obj");
-	CVK::Material spaceshipMat(glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f), 100);
-	//spaceship.setMaterial(&spaceshipMat);
+
 	//Init nodes for engines and add them to spaceship
 	CVK::Node engineNode1("Engine1", RESOURCES_PATH "/engine.obj");
 	CVK::Node engineNode2("Engine2", RESOURCES_PATH "/engine.obj");
@@ -296,17 +289,9 @@ int main()
 	spaceship.addChild(&engineNode5);
 	spaceship.addChild(&engineNode6);
 	spaceship.addChild(&engineNode7);
-//	spaceship.addChild(&engineActiveNode1);
-//	spaceship.addChild(&engineActiveNode2);
-//	spaceship.addChild(&engineActiveNode3);
-//	spaceship.addChild(&engineActiveNode4);
-//	spaceship.addChild(&engineActiveNode5);
-//	spaceship.addChild(&engineActiveNode6);
-//	spaceship.addChild(&engineActiveNode7);
 
-	//CVK::Material engineActive(RESOURCES_PATH "/engineActive.mtl", 1.0);
 
-	//Create Rocket and initialize engines as ForceActor
+	//add engines and corresponding forces to the rigid body of the rocket
 	rocket.addForce(&engine1);
 	rocket.addForce(&engine2);
 	rocket.addForce(&engine3);
@@ -315,10 +300,10 @@ int main()
 	rocket.addForce(&engine6);
 	rocket.addForce(&engine7);
 
-	//Camera
+	//Camera lookAt set to our rocket
 	glm:: vec3 rocketPos(rocket.getPosition());
 	camera.setCenter(&rocketPos);
-	camera.setRadius(120.0f);
+	camera.setRadius(90.0f);
 	CVK::State::getInstance()->setCamera( &camera);
 
 	printControls();
@@ -334,10 +319,12 @@ int main()
 		oldTime = currentTime;
 		calculateFPS(1.0, "OpenGL Window");
 
+		//updates the physics component of the rocket
+		//this is where the magic happens
 		rocket.iterate(deltaTime, gravity);
 		rocketPos = rocket.getPosition();
 
-		//set modelMatrix
+		//set modelMatrix for graphics component of the rocket
 		glm::mat3 rotationMatrix = rocket.getRotationMat();
 		glm::mat4 modelmatrix = glm::mat4(glm::vec4(rotationMatrix[0], 0.0f),
 								glm::vec4(rotationMatrix[1],0.0f),
@@ -347,29 +334,33 @@ int main()
 		modelmatrix = glm::scale(modelmatrix, glm::vec3(rocketScale, rocketScale, rocketScale));
 		spaceship.setModelMatrix(modelmatrix);
 
+		//update model matrix for engines in regard of rocket's position
 		engineNode1.setModelMatrix(glm::translate(glm::mat4(1.0f), engine1.getPosition()/rocketScale));
 		engineNode2.setModelMatrix(glm::translate(glm::mat4(1.0f), engine2.getPosition()/rocketScale));
 		engineNode3.setModelMatrix(glm::translate(glm::mat4(1.0f), engine3.getPosition()/rocketScale));
 		engineNode4.setModelMatrix(glm::translate(glm::mat4(1.0f), engine4.getPosition()/rocketScale));
-		engineNode5.setModelMatrix(glm::translate(glm::mat4(1.0f), engine5.getPosition()/rocketScale));
-		engineNode6.setModelMatrix(glm::translate(glm::mat4(1.0f), engine6.getPosition()/rocketScale));
+		engineNode5.setModelMatrix((glm::translate(glm::mat4(1.0f), (engine5.getPosition()/rocketScale)+ glm::vec3(0.35,0,0))) * glm::rotate(-90.f, glm::vec3(0,1,0)));
+		engineNode6.setModelMatrix((glm::translate(glm::mat4(1.0f), (engine6.getPosition()/rocketScale) + glm::vec3(0.35,0,0))) * glm::rotate(-90.f, glm::vec3(0,1,0)));
 		engineNode7.setModelMatrix(glm::scale(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale), glm::vec3(2, 2, 2)));
 
-
+		//draw red engines over engines active atm
 		engineActiveNode1.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine1.getPosition()/rocketScale));
 		engineActiveNode2.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine2.getPosition()/rocketScale));
 		engineActiveNode3.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine3.getPosition()/rocketScale));
 		engineActiveNode4.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine4.getPosition()/rocketScale));
-		engineActiveNode5.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine5.getPosition()/rocketScale));
-		engineActiveNode6.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), engine6.getPosition()/rocketScale));
+		engineActiveNode5.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), (engine5.getPosition()/rocketScale)+ glm::vec3(0.35,0,0)) * glm::rotate(-90.f, glm::vec3(0,1,0)));
+		engineActiveNode6.setModelMatrix(modelmatrix*glm::translate(glm::mat4(1.0f), (engine6.getPosition()/rocketScale)+ glm::vec3(0.35,0,0)) * glm::rotate(-90.f, glm::vec3(0,1,0)));
 		engineActiveNode7.setModelMatrix(modelmatrix*glm::scale(glm::translate(glm::mat4(1.0f), engine7.getPosition()/rocketScale), glm::vec3(2, 2, 2)));
 
+		//poor implementation of ground
 		if(rocketPos.y <= lowestY){
 			rocket.reset(glm::vec3(rocketPos.x, lowestY, rocketPos.z), rocket.getRotationQuat());
 		}
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
+
+		//now following all render()-calls
 		//update camera position and render
 		camera.setCenter(&rocketPos);
 		//Update Camera
@@ -390,23 +381,6 @@ int main()
 //		engineNode1.getMaterial()->setdiffColor(engine1Color);
 //		glm::vec3 engine2Color = engine2Active ? glm::vec3(1.0, 0.0, 0.0) : glm::vec3(1.0f);
 //		engineNode2.getMaterial()->setdiffColor(engine1Color);
-
-
-		//changes Material for all engines...
-//		if(engine1Active){
-//			engineNode1.getMaterial()->setdiffColor(redCol);
-//		}
-//		else engineNode1.getMaterial()->setdiffColor(whiteCol);
-
-		//crash
-//		if(engine2Active){
-//			engineNode2.getMaterial()->setdiffColor(redCol);
-//		}
-//		else engineNode2.getMaterial()->setdiffColor(whiteCol);
-
-
-		//CVK::Material currentMat1 = engine1Active ? engineActiveMat : engineMat;
-		//engineNode1.setMaterial(&currentMat1);
 		spaceShader.update();
 
 		spaceship.render();
