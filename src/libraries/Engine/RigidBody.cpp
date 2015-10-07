@@ -184,7 +184,7 @@ void RigidBody::updateMomenta(float duration, float gravity){
 	//Die restliche Force wird in Abhängigkeit der verrechneten Torque bestimmt, da für die Drehung ja Kraft aufgewendet wird.
 	//Formel (selbst erdacht): restForce = gesamtForce * ((|gesamtForce| - |Torque|)/|gesamtForce|)
 
-	std::cout<<"mForce: "<<glm::length(mForce)<<", mTorque: "<<glm::length(mTorque)<<endl;
+//	std::cout<<"mForce: "<<glm::length(mForce)<<", mTorque: "<<glm::length(mTorque)<<endl;
 //	if((glm::length(mForce) - glm::length(mTorque))>0){
 //		mForce = mForce * ((glm::length(mForce) - glm::length(mTorque)) / glm::length(mForce));
 //	}
