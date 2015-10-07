@@ -107,6 +107,7 @@ void RigidBody::updateInverseInertiaTensor(){
 }
 
 
+
 //in world space
 void RigidBody::updateMomenta(float duration, float gravity){
 	glm::vec3 rotatedForce= getRotationMat() * mForce;
